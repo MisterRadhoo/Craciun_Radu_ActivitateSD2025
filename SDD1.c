@@ -22,19 +22,22 @@ int main()
     struct Node *one = NULL;
     struct Node *two = NULL;
     struct Node *three = NULL;
+
     // alocare de memorie;
     one = (struct Node *)malloc(sizeof(struct Node));
     two = (struct Node *)malloc(sizeof(struct Node));
     three = (struct Node *)malloc(sizeof(struct Node));
+
     // assign values;
     one->value = 1;
     two->value = 2;
     three->value = 3;
-    // connect nodes;
+    // connecting nodes;
     one->next = two;
     two->next = three;
     three->next = NULL;
-    // printare node-value;
+
+    // printare nodes-values;
     head = one;
     printLikedList(head);
     return 0;
