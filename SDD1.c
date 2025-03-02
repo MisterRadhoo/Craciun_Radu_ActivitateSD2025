@@ -8,7 +8,7 @@ struct Node
     struct Node *next;
 };
 
-void printLikedList(struct Node *p)
+void printLinkedList(struct Node *p)
 {
     while (p != NULL)
     {
@@ -39,6 +39,6 @@ int main()
 
     // printare nodes-values;
     head = one;
-    printLikedList(head);
+    printLinkedList(head);
     return 0;
 }
