@@ -16,7 +16,7 @@ void printLinkedList(struct Node *p)
         p = p->next;
     }
 }
-void traverseLinkedList(struct Node *head)
+void traversalinkedList(struct Node *head)
 {
     struct Node *temp = head;
     printf("\n \n List elements are -->> \n");
