@@ -16,6 +16,16 @@ void printLinkedList(struct Node *p)
         p = p->next;
     }
 }
+void traverseLinkedList(struct Node *head)
+{
+    struct Node *temp = head;
+    printf("\n \n List elements are -->> \n");
+    while (temp != NULL)
+    {
+        printf("%d --->> ", temp->value);
+        temp = temp->next;
+    }
+}
 int main()
 { // Initializare noduri;
     struct Node *head;
@@ -40,5 +50,7 @@ int main()
     // printare nodes-values;
     head = one;
     printLinkedList(head);
+    traverseLinkedList(head);
+
     return 0;
 }
