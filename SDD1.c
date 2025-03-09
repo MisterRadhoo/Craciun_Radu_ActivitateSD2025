@@ -50,7 +50,7 @@ int main()
     // printare nodes-values;
     head = one;
     printLinkedList(head);
-    traverseLinkedList(head);
+    traversalLinkedList(head);
 
     return 0;
 }
