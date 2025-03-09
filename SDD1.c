@@ -16,10 +16,10 @@ void printLinkedList(struct Node *p)
         p = p->next;
     }
 }
-void traversalinkedList(struct Node *head)
+void traversalLinkedList(struct Node *head)
 {
     struct Node *temp = head;
-    printf("\n \n List elements are -->> \n");
+    printf("\nList elements are -->> \n");
     while (temp != NULL)
     {
         printf("%d --->> ", temp->value);
