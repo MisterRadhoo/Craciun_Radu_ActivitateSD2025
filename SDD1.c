@@ -7,19 +7,30 @@ struct Node
     int value;
     struct Node *next;
 };
+// struct Node *insertAtBeginning(struct Node *head, int newData)   // test;
+// {
+//     struct Node *newNode = head;
+//     newNode = (struct Node *)malloc(sizeof(struct Node));
+//     newNode->value = newData;
+//     newNode->next = head;
+//     head = newNode;
+// }
 
+void deleteAtBeginning(struct Node *head)
+{
+}
 void printLinkedList(struct Node *p)
 {
     while (p != NULL)
     {
-        printf(" %d ", p->value);
+        printf(" %d -->> ", p->value);
         p = p->next;
     }
 }
 void traversalLinkedList(struct Node *head)
 {
     struct Node *temp = head;
-    printf("\nList elements are -->> \n");
+    printf("\nList elements are: \n");
     while (temp != NULL)
     {
         printf("%d --->> ", temp->value);
@@ -49,7 +60,46 @@ int main()
 
     // printare nodes-values;
     head = one;
-    printLinkedList(head);
+
+    // printLinkedList(head);
+
+    // insertAtBeginning elements;
+    struct Node *newNode;
+    newNode = (struct Node *)malloc(sizeof(struct Node));
+    newNode->value = 13;
+    newNode->next = head;
+    head = newNode;
+    traversalLinkedList(head);
+    // insertAtEnd;
+    struct Node *lastNode;
+    lastNode = (struct Node *)malloc(sizeof(struct Node));
+    lastNode->value = 13;
+    lastNode->next = NULL;
+
+    struct Node *temp = head;
+    while (temp->next != NULL)
+    {
+        temp = temp->next;
+    }
+    temp->next = lastNode;
+    traversalLinkedList(head);
+
+    // insertAtMiddle;
+    struct Node *middleNode;
+    middleNode = (struct Node *)malloc(sizeof(struct Node));
+    middleNode->value = 14;
+
+    struct Node *temporary = head;
+    int position = 3;
+    for (int i = 1; i < position; i++)
+    {
+        if (temporary->next != NULL)
+        {
+            temporary = temporary->next;
+        }
+    }
+    middleNode->next = temporary->next;
+    temporary->next = middleNode;
     traversalLinkedList(head);
 
     return 0;
