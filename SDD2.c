@@ -1,5 +1,53 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+
+// Creare Laptop de tip Struct;
+struct Laptop
+{
+    int id;
+    int RAM;
+    char tipCPU[30];
+    float rezolutieEcran;
+    int nrTaste;
+    int *nrApasariTasta;
+};
+
+struct Laptop initializare(int id, int RAM, const char *tipCPU, float rez, int nrTaste)
+{
+    struct Laptop laptop1;
+    laptop1.id = id;
+    laptop1.RAM = RAM;
+    strncpy(laptop1.tipCPU, tipCPU, 30);
+    laptop1.tipCPU[29] = '\0';
+    laptop1.rezolutieEcran = rez;
+    laptop1.nrTaste = nrTaste;
+    laptop1.nrApasariTasta = (int *)malloc(nrTaste * sizeof(int));
+    if (laptop1.nrApasariTasta == NULL)
+    {
+        printf("Nu s-a putut aloca spatiu de memorie !!! \n");
+        exit(1); // iesire din program in caz de esec/eroare;
+    }
+    // initializare valori cu 0;
+    for (int i = 0; i < nrTaste; i++)
+    {
+        laptop1.nrApasariTasta[i] = 0; // cand incepe executia (for loop-ului) , fiecare elemente este setat la 0, asigurande-se ca nu avem valorii aleatorii (garbage values) in memorie si ca fiecare nrTasta incepe de la valoarea setata 0;
+    }
+    return laptop1;
+}
+
+struct Laptop display(struct Laptop l)
+{
+    printf("ID Laptop: --->> %d \n", l.id);
+    printf("Laptop RAM: -->> %d GBytes \n", l.RAM);
+    printf("Laptop tip procesor: --->> %s \n", l.tipCPU);
+    printf("Rezolutie Laptop: --->> %.2f pixeli \n", l.rezolutieEcran);
+    printf("Numar taste laptop: --->> %d \n", l.nrTaste);
+    for (int i = 0; i < l.nrTaste; i++)
+    {
+        printf("nr. apasari de tasta: %d  %d apasari \n", i + 1, l.nrApasariTasta[i]);
+    }
+}
 
 // Create a node;
 struct Node
@@ -134,6 +182,15 @@ void printList(struct Node *node)
 
 int main()
 {
+
+    struct Laptop l = initializare(1001, 16, "Intel I7", 77.88, 5);
+    // display(l);
+    l.nrApasariTasta[0] = 4;
+    l.nrApasariTasta[2] = 5;
+
+    display(l);
+    free(l.nrApasariTasta);
+    l.nrApasariTasta = NULL;
 
     struct Node *head = NULL;
 
