@@ -101,6 +101,17 @@ int main()
     middleNode->next = temporary->next;
     temporary->next = middleNode;
     traversalLinkedList(head);
+    // delete element at beginning;
+    head = head->next;
+    traversalLinkedList(head);
+    // delete element from end of Linked List;
+    struct Node *t = head;
+    while (t->next->next != NULL)
+    {                // pointer al struct node*, care arata care adresa de memorie a urmatorului nod, din linked list;
+        t = t->next; // pointer-ul next arata catre urmatorea adresa de memorie a urmatorului nod, din Linked List;
+    }
+    t->next = NULL;
+    traversalLinkedList(head);
 
     return 0;
 }
