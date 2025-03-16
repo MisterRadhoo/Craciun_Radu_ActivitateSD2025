@@ -22,7 +22,7 @@ struct Laptop initializare(int id, int RAM, const char *tipCPU, float rez, int n
     laptop1.tipCPU[29] = '\0';
     laptop1.rezolutieEcran = rez;
     laptop1.nrTaste = nrTaste;
-    laptop1.nrApasariTasta = (int *)malloc(nrTaste * sizeof(int));
+    laptop1.nrApasariTasta = (int *)malloc(nrTaste * sizeof(int)); // alocare a spatiu de memorie, returneaza un pointer la int;
     if (laptop1.nrApasariTasta == NULL)
     {
         printf("Nu s-a putut aloca spatiu de memorie !!! \n");
@@ -42,11 +42,40 @@ struct Laptop display(struct Laptop l)
     printf("Laptop RAM: -->> %d GBytes \n", l.RAM);
     printf("Laptop tip procesor: --->> %s \n", l.tipCPU);
     printf("Rezolutie Laptop: --->> %.2f pixeli \n", l.rezolutieEcran);
-    printf("Numar taste laptop: --->> %d \n", l.nrTaste);
+    printf("Numar taste laptop: --->> %d taste \n", l.nrTaste);
     for (int i = 0; i < l.nrTaste; i++)
     {
         printf("nr. apasari de tasta: %d  %d apasari \n", i + 1, l.nrApasariTasta[i]);
     }
+}
+// functie care elibeaza memoria pointer nrApasariTaste;
+void freeMemory(struct Laptop *laptop)
+{
+    if (laptop->nrApasariTasta != NULL)
+    {
+        printf("Spatiul de memorie e free: ");
+        free(laptop->nrApasariTasta);
+        laptop->nrApasariTasta = NULL;
+    }
+}
+void displayVector(struct Laptop *vector, int nrElemente)
+{
+    for (int i = 0; i < nrElemente; i++)
+    {
+        display(vector[i]);
+        printf("\n");
+    }
+}
+void freeMemoryVector(struct Laptop **laptop, int *nrElemente)
+{
+    for (int i = 0; i < *nrElemente; i++)
+    {
+        free((*laptop)[i].nrApasariTasta);
+        printf("free\n");
+    }
+    free(*laptop);
+    *nrElemente = 0;
+    *laptop = NULL;
 }
 
 // Create a node;
@@ -186,12 +215,26 @@ int main()
     struct Laptop l = initializare(1001, 16, "Intel I7", 77.88, 5);
     // display(l);
     l.nrApasariTasta[0] = 4;
-    l.nrApasariTasta[2] = 5;
+    l.nrApasariTasta[1] = 5;
+    l.nrApasariTasta[2] = 6;
 
     display(l);
-    free(l.nrApasariTasta);
-    l.nrApasariTasta = NULL;
+    freeMemory(&l); // eliberare memorie pointer nrApasariTasta;
+                    // este setat la NULL, pentru evitare dangling pointers;
 
+    // Vector alocat dinamic;
+    int nrLaptopuri = 4;
+    struct Laptop *laptopuri;
+    laptopuri = (struct Laptop *)malloc(nrLaptopuri * sizeof(struct Laptop)); // alocare dinamica a memoriei;
+    laptopuri[0] = initializare(101, 32, "AMD Rizen", 65.88, 3);
+    laptopuri[1] = initializare(202, 32, "Intel Core I8", 120.12, 4);
+    laptopuri[2] = initializare(303, 16, "Intel Kyrin i4", 34.34, 3);
+    laptopuri[3] = initializare(404, 64, "Intel Core I9", 125.99, 6);
+
+    displayVector(laptopuri, nrLaptopuri);
+    freeMemoryVector(&laptopuri, &nrLaptopuri);
+
+    printf("\n==================================================================== ");
     struct Node *head = NULL;
 
     insertAtBeginnig(&head, 13);
