@@ -123,6 +123,17 @@ void printList(struct Node *node)
         printf("\n");
     }
 }
+// Dezalocare Memorie Linked List;
+void freeLinkedList(struct Node **head)
+{
+    struct Node *temp;
+    while (*head != NULL)
+    {
+        temp = *head;
+        *head = (*head)->next;
+        free(temp);
+    }
+}
 
 int main()
 {
@@ -140,5 +151,6 @@ int main()
     freeMemory(&laptop);
     freeMemory(&laptop2);
     freeMemory(&laptop3);
+    freeLinkedList(&head);
     return 0;
 }

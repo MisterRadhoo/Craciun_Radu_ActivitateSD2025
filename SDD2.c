@@ -82,6 +82,16 @@ void freeMemoryVector(struct Laptop **laptop, int *nrElemente)
     *laptop = NULL;
 }
 
+float calcuMediaTastelor(struct Laptop *l, int nrElemente)
+{
+    float suma = 0;
+    for (int i = 0; i < nrElemente; i++)
+    {
+        suma += l[i].nrTaste;
+    }
+    return suma / nrElemente;
+}
+
 // Create a node;
 struct Node
 {
@@ -201,6 +211,17 @@ void sortLinkedList(struct Node **head)
         }
     }
 }
+void freeLinkedList(struct Node **head)
+{
+    struct Node *temp;
+    while (*head != NULL)
+    {
+        temp = *head;
+        *head = (*head)->next;
+        free(temp);
+        printf("\nMemorie dezalocata cu succes !!\n");
+    }
+}
 
 // printare Linked List;
 void printList(struct Node *node)
@@ -235,6 +256,8 @@ int main()
     laptopuri[1] = initializare(202, 32, "Intel Core I8", 120.12, 4);
     laptopuri[2] = initializare(303, 16, "Intel Kyrin i4", 34.34, 3);
     laptopuri[3] = initializare(404, 64, "Intel Core I9", 125.99, 6);
+
+    printf("\nAfisare media nr. de taste:  %.2f \n", calcuMediaTastelor(laptopuri, nrLaptopuri));
 
     displayVector(laptopuri, nrLaptopuri);
     freeMemoryVector(&laptopuri, &nrLaptopuri);
@@ -271,6 +294,7 @@ int main()
     sortLinkedList(&head);
     printf("\nSorted Linked List in ascending order: ");
     printList(head);
+    freeLinkedList(&head);
 
     return 0;
 }
