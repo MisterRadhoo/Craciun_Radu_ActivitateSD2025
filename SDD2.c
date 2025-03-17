@@ -25,9 +25,11 @@ struct Laptop initializare(int id, int RAM, const char *tipCPU, float rez, int n
     laptop1.nrApasariTasta = (int *)malloc(nrTaste * sizeof(int)); // alocare a spatiu de memorie, returneaza un pointer la int;
     if (laptop1.nrApasariTasta == NULL)
     {
+
         printf("Nu s-a putut aloca spatiu de memorie !!! \n");
         exit(1); // iesire din program in caz de esec/eroare;
     }
+
     // initializare valori cu 0;
     for (int i = 0; i < nrTaste; i++)
     {
@@ -36,7 +38,7 @@ struct Laptop initializare(int id, int RAM, const char *tipCPU, float rez, int n
     return laptop1;
 }
 
-struct Laptop display(struct Laptop l)
+void display(struct Laptop l)
 {
     printf("ID Laptop: --->> %d \n", l.id);
     printf("Laptop RAM: -->> %d GBytes \n", l.RAM);
@@ -53,11 +55,12 @@ void freeMemory(struct Laptop *laptop)
 {
     if (laptop->nrApasariTasta != NULL)
     {
-        printf("Spatiul de memorie e free: ");
+        printf("Spatiul de memorie e free: \n");
         free(laptop->nrApasariTasta);
         laptop->nrApasariTasta = NULL;
     }
 }
+// functie de afisare vector;
 void displayVector(struct Laptop *vector, int nrElemente)
 {
     for (int i = 0; i < nrElemente; i++)
@@ -66,6 +69,7 @@ void displayVector(struct Laptop *vector, int nrElemente)
         printf("\n");
     }
 }
+// functie de dezalocare memorie, vector;
 void freeMemoryVector(struct Laptop **laptop, int *nrElemente)
 {
     for (int i = 0; i < *nrElemente; i++)
@@ -81,6 +85,7 @@ void freeMemoryVector(struct Laptop **laptop, int *nrElemente)
 // Create a node;
 struct Node
 {
+
     int data;
     struct Node *next;
 };
