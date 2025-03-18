@@ -149,7 +149,7 @@ void insertAtEnd(struct Node **headRef, int newData)
 // delete a node;
 void deleteNode(struct Node **head, int key)
 {
-    struct Node *temp = *head, *prev;
+    struct Node *temp = *head, *prev = NULL;
     if (temp != NULL && temp->data == key)
     {
         *head = temp->next;
@@ -219,6 +219,7 @@ void freeLinkedList(struct Node **head)
         temp = *head;
         *head = (*head)->next;
         free(temp);
+        temp = NULL;
         printf("\nMemorie dezalocata cu succes !!\n");
     }
 }

@@ -74,6 +74,21 @@ void insertAtBeginning(struct Node **head, struct Laptop l)
     newNode->next = *head;
     *head = newNode;
 }
+
+void insertAfterNode(struct Node *previousNode, struct Laptop l)
+{
+    if (previousNode == NULL)
+    {
+        printf("Nodul anterior, nu poate fi NULL !!");
+        return;
+    }
+
+    struct Node *newNode = (struct Node *)malloc(sizeof(struct Node));
+    newNode->laptop = l;
+    newNode->next = previousNode->next;
+    previousNode->next = newNode;
+}
+
 void insertAtEnd(struct Node **head, struct Laptop l)
 {
     struct Node *newNode = (struct Node *)malloc(sizeof(struct Node));
@@ -91,17 +106,18 @@ void insertAtEnd(struct Node **head, struct Laptop l)
     return;
 }
 
-void deleteNode(struct Node **head, struct Laptop l)
+void deleteNode(struct Node **head, int id)
 {
-    struct Node *temp = *head, *prev;
-    if (temp != NULL && temp->laptop.id == l.id)
+    struct Node *temp = *head, *prev = NULL;
+    if (temp != NULL && temp->laptop.id == id)
     {
         *head = temp->next;
+        freeMemory(&temp->laptop);
         free(temp);
         return;
     }
     // Gasire id laptop, care sa fie sters;
-    while (temp != NULL && temp->laptop.id != l.id)
+    while (temp != NULL && temp->laptop.id != id)
     {
         prev = temp;
         temp = temp->next;
@@ -111,7 +127,19 @@ void deleteNode(struct Node **head, struct Laptop l)
         return;
     // Stergere node;
     prev->next = temp->next;
+    freeMemory(&temp->laptop);
     free(temp);
+}
+int searchNode(struct Node **head, int id)
+{
+    struct Node *current = *head;
+    while (current != NULL)
+    {
+        if (current->laptop.id == id)
+            return 1;
+        current = current->next;
+    }
+    return 0;
 }
 void printList(struct Node *node)
 {
@@ -123,6 +151,7 @@ void printList(struct Node *node)
         printf("\n");
     }
 }
+
 // Dezalocare Memorie Linked List;
 void freeLinkedList(struct Node **head)
 {
@@ -131,7 +160,9 @@ void freeLinkedList(struct Node **head)
     {
         temp = *head;
         *head = (*head)->next;
+        freeMemory(&temp->laptop);
         free(temp);
+        temp = NULL;
     }
 }
 
@@ -140,17 +171,36 @@ int main()
     struct Laptop laptop = initializare(101, "Acer Nitro", 32, 256.55, 120.56, 4);
     struct Laptop laptop2 = initializare(102, "MacBook Pro", 64, 512, 99.99, 5);
     struct Laptop laptop3 = initializare(103, "Lenovo", 32, 256.87, 88.99, 3);
+    struct Laptop laptop4 = initializare(104, "ASUS Rock", 64, 1024, 156.66, 4);
+
+    laptop2.nrApasariTasta[0] = 8;
+    laptop2.nrApasariTasta[2] = 9;
+    laptop2.nrApasariTasta[3] = 2;
+
+    laptop4.nrApasariTasta[0] = 3;
+    laptop4.nrApasariTasta[1] = 4;
+    laptop4.nrApasariTasta[2] = 8;
+    laptop4.nrApasariTasta[3] = 12;
 
     struct Node *head = NULL;
     insertAtBeginning(&head, laptop);
     insertAtBeginning(&head, laptop2);
+    insertAfterNode(head->next, laptop4);
     insertAtEnd(&head, laptop3);
-    deleteNode(&head, laptop);
+
+    deleteNode(&head, 101);
     printList(head);
 
-    freeMemory(&laptop);
-    freeMemory(&laptop2);
-    freeMemory(&laptop3);
+    // Cautare Node;
+    if (searchNode(&head, 104))
+    {
+        printf("Gasit. %d \n", laptop4.id);
+    }
+    else
+    {
+        printf("Negasit. \n");
+    }
+
     freeLinkedList(&head);
     return 0;
 }
