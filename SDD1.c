@@ -101,7 +101,9 @@ void insertAtEnd(struct Node **head, struct Laptop l)
         return;
     }
     while (lastNode->next != NULL)
+    {
         lastNode = lastNode->next;
+    }
     lastNode->next = newNode;
     return;
 }

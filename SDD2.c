@@ -141,7 +141,9 @@ void insertAtEnd(struct Node **headRef, int newData)
         return;
     }
     while (lastNode->next != NULL)
+    {
         lastNode = lastNode->next;
+    }
     lastNode->next = newNode;
     return;
 }
@@ -270,6 +272,7 @@ int main()
     insertAtBeginnig(&head, 14);
     insertAtEnd(&head, 21);
     insertAtEnd(&head, 1);
+    insertAtEnd(&head, 333);
     insertAfter(head->next, 101);
     insertAfter(head->next, 102);
 
