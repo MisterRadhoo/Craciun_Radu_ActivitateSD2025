@@ -216,7 +216,73 @@ O getOchelariDupaIdHT(HT ht, int id)
     }
     return ochelariID;
 }
-// float *sumaPreturilorUnuiCluster();
+float pretTotalLista(Nod *cap)
+{
+    if (cap)
+    {
+        float suma = 0;
+        int contor = 0;
+        while (cap)
+        {
+            suma += cap->data.pret;
+            contor++;
+            cap = cap->next;
+        }
+        return suma;
+    }
+    return 0;
+}
+// vector bidimensional 2D vector;
+float **sumaPreturilorUnuiCluster(HT ht, int *nrClustere)
+{
+    *nrClustere = 0;
+    for (int i = 0; i < ht.capacitate; i++)
+    {
+        if (ht.array[i] != NULL)
+        {
+            (*nrClustere)++;
+        }
+    }
+    float **total = (float **)malloc(sizeof(float *) * 2);
+    total[0] = (float *)malloc(sizeof(float *) * (*nrClustere));
+    total[1] = (float *)malloc(sizeof(float *) * (*nrClustere));
+
+    int index = 0;
+    for (int i = 0; i < ht.capacitate; i++)
+    {
+        if (ht.array[i] != NULL)
+        {
+            total[0][index] = i;
+            total[1][index] = pretTotalLista(ht.array[i]);
+            index++;
+        }
+    }
+    return total;
+}
+void afisareMatrice(float **matrice, int nrCol, int nrLinii)
+{
+    for (int i = 0; i < nrLinii; i++)
+    {
+        for (int j = 0; j < nrCol; j++)
+        {
+            printf("// %.2f ", matrice[i][j]);
+        }
+        printf("\n");
+    }
+}
+void dezalocareM(float ***matrix, int *nrLinii, int *nrCol)
+{
+    for (int i = 0; i < *nrLinii; i++)
+    {
+        free((*matrix)[i]);
+        printf("Matrix free. \n");
+    }
+    free(*matrix);
+    *matrix = NULL;
+    *nrLinii = 0;
+    *nrCol = 0;
+}
+
 int main()
 {
     Nod *head = NULL;
@@ -248,6 +314,13 @@ int main()
     // afisareHashTable(ht);
     printf("\n");
     afisareHashTable(ht);
+
+    printf("Pret total pe clustere <<Hash Table>>;  \n");
+    int nrClustere = 3;
+    float **M = sumaPreturilorUnuiCluster(ht, &nrClustere);
+    int nrLinii = 2;
+    afisareMatrice(M, nrClustere, 2);
+    dezalocareM(&M, &nrLinii, &nrClustere);
     freeMemoryHT(&ht);
     return 0;
 }
