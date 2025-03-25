@@ -1,8 +1,10 @@
+#define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-// Creare Laptop de tip Struct;
+// Linked List + Vectori alocati dinamic;
+//  Creare Laptop de tip Struct;
 struct Laptop
 {
     int id;

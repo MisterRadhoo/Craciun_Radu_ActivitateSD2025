@@ -1,0 +1,1 @@
+    inserareHashTable(ht, o1);

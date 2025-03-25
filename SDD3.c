@@ -1,7 +1,9 @@
+#define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
+// Linked List doubly linked; liste dublu inlantuite;
 typedef struct Calculator
 {
     int id;
@@ -129,8 +131,10 @@ void parcurgereLista(LDI *lista)
     nodLDI *p = lista->primul;
     while (p)
     {
+        display(p->info);
         printf("Calculatorul are %d RAM si %d spatiu de stocare \n", p->info.RAM, p->info.capacitate);
         p = p->next;
+        printf("\n");
     }
 }
 void parcurgereInversa(LDI *lista)
@@ -138,6 +142,7 @@ void parcurgereInversa(LDI *lista)
     nodLDI *p = lista->ultimul;
     while (p)
     {
+
         printf("Calculatorul are %d RAM si %d spatiu de stocare \n", p->info.RAM, p->info.capacitate);
         p = p->previous;
     }
@@ -150,10 +155,11 @@ int main()
     PC c3 = initializare(13, "Dell", 16, 256);
     PC c4 = initializare(14, "Alienware Dell", 128, 2048);
     PC c5 = initializare(15, "Sony Vaio", 16, 128);
-    display(c2);
+    // display(c2);
     LDI *lista = (LDI *)malloc(sizeof(LDI));
     lista->primul = NULL;
     lista->ultimul = NULL;
+
     inserare_inceput(lista, c5);
     inserare_inceput(lista, c);
     inserare_inceput(lista, c1);

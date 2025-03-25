@@ -245,7 +245,7 @@ int main()
     float mediaPc = mediaPreturilor(pcs, nrCalculatoare);
     printf("Media de preturi este: -->> %.2f lei ", mediaPc);
     PC gasit = getSistemDeOperareNume(pcs, nrCalculatoare, "Windows Vista");
-    printf("\n");
+    printf("\nSistem de operare.\n");
     display(gasit);
 
     dezalocareVector(&pcs, &nrCalculatoare);
