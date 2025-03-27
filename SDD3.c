@@ -36,11 +36,13 @@ PC initializare(int id, const char *nume, int RAM, int capacitate)
 
     return pc;
 }
+
 void display(PC pc)
 {
     printf("Calculator ID: --->> %d, Calculator nume: --->> %s \n", pc.id, pc.nume);
     printf("Calculator RAM: --->> %d GBytes, Calculator spatiu de stocare: --->> %d GB \n", pc.RAM, pc.capacitate);
 }
+
 void dezalocareMemorie(PC *pc)
 {
     if (pc->nume != NULL)
@@ -63,6 +65,7 @@ typedef struct LDI
     nodLDI *primul;
     nodLDI *ultimul;
 } LDI;
+
 void inserare_inceput(LDI *lista, PC c)
 {
     // Creare nou node LDI;
@@ -142,7 +145,6 @@ void parcurgereInversa(LDI *lista)
     nodLDI *p = lista->ultimul;
     while (p)
     {
-
         printf("Calculatorul are %d RAM si %d spatiu de stocare \n", p->info.RAM, p->info.capacitate);
         p = p->previous;
     }

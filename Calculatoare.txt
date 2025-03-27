@@ -1,0 +1,35 @@
+Calculator Id: [101] 
+Calculator Brand: [Acer Nitro] 
+Calculator CPU: [Intel i7 ] 
+Calculator Memorie RAM: [32] Gbytes 
+Calculator capacitate: [512] GB 
+Calculator pret: [700.99] $ 
+--------------------------------------------------------------
+Calculator Id: [202] 
+Calculator Brand: [Lenovo] 
+Calculator CPU: [AMD Ryzen] 
+Calculator Memorie RAM: [16] Gbytes 
+Calculator capacitate: [256] GB 
+Calculator pret: [620.19] $ 
+--------------------------------------------------------------
+Calculator Id: [303] 
+Calculator Brand: [Asus Pro] 
+Calculator CPU: [Intel i9 Core] 
+Calculator Memorie RAM: [64] Gbytes 
+Calculator capacitate: [1024] GB 
+Calculator pret: [909.99] $ 
+--------------------------------------------------------------
+Calculator Id: [404] 
+Calculator Brand: [Dell] 
+Calculator CPU: [Intel i5 R] 
+Calculator Memorie RAM: [16] Gbytes 
+Calculator capacitate: [256] GB 
+Calculator pret: [500.99] $ 
+--------------------------------------------------------------
+Calculator Id: [505] 
+Calculator Brand: [MacBook] 
+Calculator CPU: [Apple A16] 
+Calculator Memorie RAM: [32] Gbytes 
+Calculator capacitate: [512] GB 
+Calculator pret: [887.99] $ 
+--------------------------------------------------------------
