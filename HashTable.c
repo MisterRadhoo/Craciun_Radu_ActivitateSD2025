@@ -200,7 +200,7 @@ O getOchelariDupaIdLista(Nod *cap, int id)
         }
     }
     O ochelari;
-    ochelari.id = 0;
+    ochelari.id = -1;
     return ochelari;
 }
 O getOchelariDupaIdHT(HT ht, int id)
@@ -244,8 +244,8 @@ float **sumaPreturilorUnuiCluster(HT ht, int *nrClustere)
         }
     }
     float **total = (float **)malloc(sizeof(float *) * 2);
-    total[0] = (float *)malloc(sizeof(float *) * (*nrClustere));
-    total[1] = (float *)malloc(sizeof(float *) * (*nrClustere));
+    total[0] = (float *)malloc(sizeof(float) * (*nrClustere));
+    total[1] = (float *)malloc(sizeof(float) * (*nrClustere));
 
     int index = 0;
     for (int i = 0; i < ht.capacitate; i++)
