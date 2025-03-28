@@ -10,6 +10,7 @@ typedef struct Calculator
     char *nume;
     int RAM;
     int capacitate;
+
 } PC;
 
 PC initializare(int id, const char *nume, int RAM, int capacitate)
@@ -57,6 +58,7 @@ typedef struct nodLDI
     PC info;
     struct nodLDI *next;
     struct nodLDI *previous;
+
 } nodLDI;
 
 // Creare Structura, Liste dublu inlantuite;
@@ -64,6 +66,7 @@ typedef struct LDI
 {
     nodLDI *primul;
     nodLDI *ultimul;
+
 } LDI;
 
 void inserare_inceput(LDI *lista, PC c)
@@ -140,6 +143,7 @@ void parcurgereLista(LDI *lista)
         printf("\n");
     }
 }
+
 void parcurgereInversa(LDI *lista)
 {
     nodLDI *p = lista->ultimul;
@@ -149,6 +153,7 @@ void parcurgereInversa(LDI *lista)
         p = p->previous;
     }
 }
+
 int main()
 {
     PC c = initializare(10, "Lenovo PC", 64, 256);
