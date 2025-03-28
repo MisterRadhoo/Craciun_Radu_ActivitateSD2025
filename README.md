@@ -5,3 +5,4 @@ ProjectASE-SDD
 # SDD1.c -> Implementare simpla, Liste simple inlantuite + Operatii ale functiilor structurii de date, stocand obiecte de tip struct Laptop;
 # SDD2.c -> Linked List + Vectori, stocand obiecte tip 'struct Laptop';
 # SSD3.c -> Implementare simpla , Structura de date 'Lista Dublu Inlantuita, Manual de la curs;
+# SSD4.c -> Linked List + vectori, stocand obiecte de tip "struct Calculator', Manual de la curs;
