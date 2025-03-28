@@ -11,6 +11,7 @@ struct Calculator
     int capacitate;
     float pret;
 };
+
 typedef struct Calculator PC;
 
 PC initializare(const char *OS, int RAM, int cap, float pret)
@@ -41,6 +42,7 @@ void display(PC c)
     printf("Sistem de operare PC: --->> %s; Memoria RAM %d GBytes. ", c.OS, c.RAM);
     printf("Capacitate de stocare date: -->>>> %d GB, Pretul PC-ul: --->>  %6.2f lei .", c.capacitate, c.pret);
 }
+
 void dezalocareMemorie(PC *calculator)
 {
     if (calculator->OS != NULL)
@@ -49,6 +51,7 @@ void dezalocareMemorie(PC *calculator)
         calculator->OS = NULL;
     }
 }
+
 float mediaPreturilor(PC *calculatoare, int numar)
 {
     float suma = 0;
@@ -58,6 +61,7 @@ float mediaPreturilor(PC *calculatoare, int numar)
     }
     return suma / numar;
 }
+
 void afisareVector(PC *vector, int nrElem)
 {
     for (int i = 0; i < nrElem; i++)
@@ -66,6 +70,7 @@ void afisareVector(PC *vector, int nrElem)
         printf("\n");
     }
 }
+
 void dezalocareVector(PC **vector, int *nrElemente)
 {
     for (int i = 0; i < *nrElemente; i++)
@@ -76,6 +81,7 @@ void dezalocareVector(PC **vector, int *nrElemente)
     *nrElemente = 0;
     *vector = NULL;
 }
+
 PC getSistemDeOperareNume(PC *calculatorVector, int nrElemente, const char *numeOS)
 {
     PC pc;
