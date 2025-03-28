@@ -414,5 +414,6 @@ int main()
 
     // createFileTxt(&calculator6, 6, "Pc-uri.txt");
     dezalocareLista(&cap);
+
     return 0;
 }
