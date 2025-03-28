@@ -4,7 +4,7 @@
 #include <string.h>
 
 // Linked List + Vectori alocati dinamic;
-//  Creare Laptop de tip Struct;
+// Creare Laptop de tip Struct;
 struct Laptop
 {
     int id;
