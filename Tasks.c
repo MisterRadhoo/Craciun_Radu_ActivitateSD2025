@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 // testing.....;
-// Task1 {Structura si functii};// Task 2 {Vectori};// Task 3;{Fisiere....}
+// Task1 {Structura si functii};// Task 2 {Vectori};// Task 3;{Fisiere} // Task 5{Liste simple inlantuite....};
 typedef struct Calculator
 {
     int id;
@@ -13,6 +13,7 @@ typedef struct Calculator
     int RAM;
     int capacitate;
     float pret;
+
 } PC;
 
 PC initializare(int id, char *brand, char *CPU, int RAM, int cap, float pret)
@@ -57,7 +58,7 @@ PC inputs()
 
     return c;
 }
-// calculeaza reducere la pret obiect;
+// calculeaza reducerea de pret al unui obiect;
 float reducerePret(PC c, float reducere)
 {
     float discount = c.pret - (c.pret * reducere / 100.0f);
@@ -68,6 +69,7 @@ void setPret(PC *pc, float pretNou)
 {
     pc->pret = pretNou;
 }
+// modificare atribut/menbru de data (char *brand);
 void setBrand(PC *pc, const char *brandNou)
 {
     if (pc->brand != NULL)
@@ -179,6 +181,7 @@ PC *concatVectori(PC *v1, PC *v2, int dim1, int dim2)
     }
     return vectorFinal;
 }
+
 void createFileTxt(PC *vectorPC, int dim, const char *calculatoare)
 {
     FILE *f;
@@ -196,10 +199,149 @@ void createFileTxt(PC *vectorPC, int dim, const char *calculatoare)
         fprintf(f, "Calculator capacitate: [%d] GB \n", vectorPC[i].capacitate);
         fprintf(f, "Calculator pret: [%.2f] $ \n", vectorPC[i].pret);
         fprintf(f, "--------------------------------------------------------------\n");
-        free(vectorPC[i].brand);
     }
     fclose(f);
-    printf("Fisier Text creat. \n", calculatoare);
+    printf("Fisier text creat. \n", calculatoare);
+}
+
+// Lista simpla inlantuita;
+typedef struct Node
+{
+    PC data;
+    struct Node *next;
+
+} Node;
+
+void inserareInceputLista(Node **cap, PC calculator)
+{
+    Node *nouNode = (Node *)malloc(sizeof(Node));
+    nouNode->data = calculator; // shallow copy, numai pentru copy de obiecte dupa cel original/initial;
+    nouNode->data.brand = (char *)malloc((strlen(calculator.brand) + 1) * sizeof(char));
+    strcpy(nouNode->data.brand, calculator.brand);
+    nouNode->next = (*cap);
+    (*cap) = nouNode;
+}
+
+void inserareSfarsitLista(Node **cap, PC calculator)
+{
+    Node *nouNod = (Node *)malloc(sizeof(Node));
+    nouNod->data = calculator;
+    nouNod->data.brand = (char *)malloc((strlen(calculator.brand) + 1) * sizeof(char));
+    strcpy(nouNod->data.brand, calculator.brand);
+    nouNod->next = NULL;
+    if ((*cap) != NULL)
+    {
+        Node *pointer = (*cap);
+        while (pointer->next)
+        {
+            pointer = pointer->next;
+        }
+        pointer->next = nouNod;
+    }
+    else
+    {
+        (*cap) = nouNod;
+    }
+}
+// stergere Node dupa pozitie, conditia fiind "id";
+void stegereNodDupaPozitie(Node **cap, int id)
+{
+    while ((*cap) && (*cap)->data.id == id)
+    {
+        Node *aux = *cap;
+        (*cap) = aux->next;
+        if (aux->data.brand != NULL)
+        {
+            free(aux->data.brand);
+        }
+        free(aux);
+    }
+    if ((*cap))
+    {
+        Node *p = *cap;
+        while (p)
+        {
+            while (p->next && p->next->data.id != id)
+            {
+                p = p->next;
+            }
+            if (p->next)
+            {
+                Node *temp = p->next;
+                p->next = temp->next;
+                if (temp->data.brand != NULL)
+                {
+                    free(temp->data.brand);
+                }
+                free(temp);
+            }
+            else
+            {
+                p = NULL;
+            }
+        }
+    }
+}
+
+float calculezaPretMediu(Node *cap)
+{
+    float suma = 0;
+    int contor = 0;
+    while (cap != NULL)
+    {
+        suma += cap->data.pret;
+        contor++;
+        cap = cap->next;
+    }
+    if (contor > 0)
+    {
+        return suma / contor;
+    }
+    return 0;
+}
+
+float pretulCalculatoareAcelasiBrand(Node *cap, const char *brandCautat)
+{
+    float suma = 0;
+
+    while (cap != NULL)
+    {
+        if (strcmp(cap->data.brand, brandCautat) == 0)
+        {
+            suma += cap->data.pret;
+        }
+        cap = cap->next;
+    }
+    return suma;
+}
+
+void printLista(Node *cap)
+{
+    printf("\nLista Simpla inlantuita este: \n");
+    while (cap != NULL)
+    {
+        display(cap->data);
+        // printf(" %d --->>", cap->data);
+        cap = cap->next;
+        printf(" -->> \n");
+    }
+}
+
+void dezalocareLista(Node **cap)
+{
+
+    while (*cap != NULL)
+    {
+        Node *pointer = (*cap);
+        (*cap) = (*cap)->next;
+        if (pointer->data.brand)
+        {
+            free(pointer->data.brand);
+            printf("Free. \n");
+        }
+        free(pointer);
+        pointer->data.brand = NULL;
+    }
 }
 
 int main()
@@ -209,40 +351,68 @@ int main()
     // float redus = reducerePret(pc1, 10);
     // printf("Redus de la %.2f $ ", redus);
 
-    PC pc2 = initializare(1000, "MacBook", "Apple M3 Max", 32, 512, 899.88);
-    setBrand(&pc2, "MacBook Pro M1");
+    // PC pc2 = initializare(1000, "MacBook", "Apple M3 Max", 32, 512, 899.88);
+    // setBrand(&pc2, "MacBook Pro M1");
     // display(pc2);
 
     // vector alocat dinamic;
-    int nrCalculatoare = 5;
+    int nrCalculatoare = 6;
     PC *vectorPC = (PC *)malloc(nrCalculatoare * sizeof(PC));
     vectorPC[0] = initializare(101, "Acer Nitro", "Intel i7 ", 32, 512, 700.99);
     vectorPC[1] = initializare(202, "Lenovo", "AMD Ryzen", 16, 256, 620.19);
     vectorPC[2] = initializare(303, "Asus Pro", "Intel i9 Core", 64, 1024, 909.99);
     vectorPC[3] = initializare(404, "Dell", "Intel i5 R", 16, 256, 500.99);
     vectorPC[4] = initializare(505, "MacBook", "Apple A16", 32, 512, 887.99);
-    // displayVector(vectorPC, nrCalculatoare);
+    vectorPC[5] = initializare(606, "Toshiba", "AMD Ryzen 3x", 32, 256, 455.78);
+    displayVector(vectorPC, nrCalculatoare);
 
     // vector ce stocheaza PC cu capacitate > 256 GB;
     int dim1 = 0;
     int dim2 = 0;
-    PC *cap = vectorCapacitate(vectorPC, nrCalculatoare, 256, &dim1);
-    displayVector(cap, dim1);
+    PC *spatiu = vectorCapacitate(vectorPC, nrCalculatoare, 256, &dim1);
+    displayVector(spatiu, dim1);
     //  Vector ce stocheaza PC cu RAM <= 16 GBtyes;
     PC *vectorRAM = vectorMinRAM(vectorPC, nrCalculatoare, 16, &dim2);
     displayVector(vectorRAM, dim2);
 
     printf("Suma a doi vector:---------------------------------------------------------------------------- \n");
     int dimFinal = dim1 + dim2;
-    PC *concat = concatVectori(cap, vectorRAM, dim1, dim2);
+    PC *concat = concatVectori(spatiu, vectorRAM, dim1, dim2);
     displayVector(concat, dimFinal);
 
-    createFileTxt(vectorPC, nrCalculatoare, "Calculatoare.txt");
+    // createFileTxt(vectorPC, nrCalculatoare, "Calculatoare.txt");
 
     dezalocare(&vectorPC, &nrCalculatoare);
-    dezalocare(&cap, &dim1);
+    dezalocare(&spatiu, &dim1);
     dezalocare(&vectorRAM, &dim2);
     dezalocare(&concat, &dimFinal);
 
+    // Linked list;
+    PC calculator1 = initializare(1000, "Asus Pro 3", "Intel I9", 16, 256, 500.10);
+    PC calculator2 = initializare(1001, "Acer Nitro 5", "AMD Duron x6", 32, 512, 640.00);
+    PC calculator3 = initializare(1002, "Dell", "Intel i9 Turbo", 64, 1024, 1280.89);
+    PC calculator4 = initializare(1003, "Lenovo Legion", "AMD e15", 32, 512, 870.30);
+    PC calculator5 = initializare(3004, "Dell", "Intel i3", 16, 256, 456.44);
+    PC calculator6 = initializare(3004, "MacBook Pro 2T", "Apple M3", 32, 512, 1099.99);
+
+    Node *cap = NULL;
+
+    inserareInceputLista(&cap, calculator1);
+    inserareInceputLista(&cap, calculator2);
+    inserareInceputLista(&cap, calculator3);
+    inserareInceputLista(&cap, calculator4);
+    inserareSfarsitLista(&cap, calculator5);
+    inserareInceputLista(&cap, calculator6);
+    printLista(cap);
+
+    printf("\nPret Mediu este: %.2f $ \n", calculezaPretMediu(cap));
+    printf("\nPret Total al PC-urilor este: %.2f $ \n", pretulCalculatoareAcelasiBrand(cap, "Dell"));
+
+    printf("\nStergere Calculatoare dupa ID: 3004 \n");
+    stegereNodDupaPozitie(&cap, 3004);
+    printLista(cap);
+
+    // createFileTxt(&calculator6, 6, "Pc-uri.txt");
+    dezalocareLista(&cap);
     return 0;
 }

@@ -33,3 +33,10 @@ Calculator Memorie RAM: [32] Gbytes
 Calculator capacitate: [512] GB 
 Calculator pret: [887.99] $ 
 --------------------------------------------------------------
+Calculator Id: [606] 
+Calculator Brand: [Toshiba] 
+Calculator CPU: [AMD Ryzen 3x] 
+Calculator Memorie RAM: [32] Gbytes 
+Calculator capacitate: [256] GB 
+Calculator pret: [455.78] $ 
+--------------------------------------------------------------
