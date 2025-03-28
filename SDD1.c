@@ -3,7 +3,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-// Linked List;
 struct Laptop
 {
     int id;
@@ -64,11 +63,14 @@ void freeMemory(struct Laptop *laptop)
         printf("free memory !\n");
     }
 }
+
+// Linked List;
 struct Node
 {
     struct Laptop laptop;
     struct Node *next;
 };
+
 void insertAtBeginning(struct Node **head, struct Laptop l)
 {
     struct Node *newNode = (struct Node *)malloc(sizeof(struct Node));
@@ -134,6 +136,7 @@ void deleteNode(struct Node **head, int id)
     freeMemory(&temp->laptop);
     free(temp);
 }
+
 int searchNode(struct Node **head, int id)
 {
     struct Node *current = *head;
@@ -145,6 +148,7 @@ int searchNode(struct Node **head, int id)
     }
     return 0;
 }
+
 void printList(struct Node *node)
 {
     printf("Elements of Linked list: -->> \n");
