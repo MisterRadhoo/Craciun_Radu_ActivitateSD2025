@@ -4,7 +4,6 @@
 #include <string.h>
 
 // Implementare Hash Table;
-
 typedef struct Ochelari
 {
     int id;
@@ -12,6 +11,7 @@ typedef struct Ochelari
     char *provenienta;
     float pret;
 } O;
+
 typedef struct Nod
 {
     O data;
@@ -37,6 +37,7 @@ O initializare(int id, const char *brand, const char *provenienta, float pret)
     ochelari.pret = pret;
     return ochelari;
 }
+
 void afisare(O o)
 {
     printf("Ochelari Id: -->> %d , Brand ochelari: -->> %s \n", o.id, o.brand);
@@ -95,6 +96,7 @@ void inserareNodLista(Nod **cap, O ochelari)
     nou->next = (*cap);
     (*cap) = nou;
 }
+
 void stergereNodLista(Nod **cap, int id)
 {
     if (*cap)
@@ -127,6 +129,7 @@ void stergereNodLista(Nod **cap, int id)
         }
     }
 }
+
 void inserareElemHashTable(HT hash, O ochelari)
 {
     int index = calculeazaHash(ochelari.brand, ochelari.id, hash.capacitate);
@@ -143,6 +146,7 @@ void inserareElemHashTable(HT hash, O ochelari)
         }
     }
 }
+
 void stergereElemHashTable(HT ht, O ochelariVechi)
 {
     int index = calculeazaHash(ochelariVechi.brand, ochelariVechi.id, ht.capacitate);
@@ -155,6 +159,7 @@ void stergereElemHashTable(HT ht, O ochelariVechi)
         stergereNodLista(&(ht.array[index]), ochelariVechi.id);
     }
 }
+
 void stergereLista(Nod **cap)
 {
     while ((*cap))
@@ -174,6 +179,7 @@ void stergereLista(Nod **cap)
         free(p);
     }
 }
+
 void freeMemoryHT(HT *ht)
 {
     for (int i = 0; i < ht->capacitate; i++)
@@ -203,6 +209,7 @@ O getOchelariDupaIdLista(Nod *cap, int id)
     ochelari.id = -1;
     return ochelari;
 }
+
 O getOchelariDupaIdHT(HT ht, int id)
 {
     O ochelariID;
@@ -216,6 +223,7 @@ O getOchelariDupaIdHT(HT ht, int id)
     }
     return ochelariID;
 }
+
 float pretTotalLista(Nod *cap)
 {
     if (cap)
@@ -259,6 +267,7 @@ float **sumaPreturilorUnuiCluster(HT ht, int *nrClustere)
     }
     return total;
 }
+
 void afisareMatrice(float **matrice, int nrCol, int nrLinii)
 {
     for (int i = 0; i < nrLinii; i++)
@@ -270,6 +279,7 @@ void afisareMatrice(float **matrice, int nrCol, int nrLinii)
         printf("\n");
     }
 }
+
 void dezalocareM(float ***matrix, int *nrLinii, int *nrCol)
 {
     for (int i = 0; i < *nrLinii; i++)
