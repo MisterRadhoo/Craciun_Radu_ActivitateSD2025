@@ -243,45 +243,6 @@ void inserareSfarsitLista(Node **cap, PC calculator)
         (*cap) = nouNod;
     }
 }
-// stergere Node dupa pozitie, conditia fiind "id";
-void stegereNodDupaPozitie(Node **cap, int id)
-{
-    while ((*cap) && (*cap)->data.id == id)
-    {
-        Node *aux = *cap;
-        (*cap) = aux->next;
-        if (aux->data.brand != NULL)
-        {
-            free(aux->data.brand);
-        }
-        free(aux);
-    }
-    if ((*cap))
-    {
-        Node *p = *cap;
-        while (p)
-        {
-            while (p->next && p->next->data.id != id)
-            {
-                p = p->next;
-            }
-            if (p->next)
-            {
-                Node *temp = p->next;
-                p->next = temp->next;
-                if (temp->data.brand != NULL)
-                {
-                    free(temp->data.brand);
-                }
-                free(temp);
-            }
-            else
-            {
-                p = NULL;
-            }
-        }
-    }
-}
 
 float calculezaPretMediu(Node *cap)
 {
@@ -298,6 +259,41 @@ float calculezaPretMediu(Node *cap)
         return suma / contor;
     }
     return 0;
+}
+// Stergere node dupa pozitie specificata;
+void stergereDupaPozitie(Node **cap, int pozitie)
+{
+    Node *temp = (*cap), *nodAnterior = NULL;
+    // Daca lista este goala;
+    if (temp == NULL)
+    {
+        return;
+    }
+    // 'Cap' node sa fie sters, daca pozitia==1;
+    if (pozitie == 1)
+    {
+        (*cap) = temp->next;
+        free(temp->data.brand);
+        free(temp);
+        return;
+    }
+    // Node sa fie sters la mijloc, traversare pana la pozitia pasata in fuctie;
+    for (int i = 1; temp != NULL && i < pozitie; i++)
+    {
+        nodAnterior = temp;
+        temp = temp->next;
+    }
+    // Daca pozitia nu este gasita, sterge Node;
+    if (temp != NULL)
+    {
+        nodAnterior->next = temp->next;
+        free(temp->data.brand);
+        free(temp);
+    }
+    else
+    {
+        printf("\nDatele nu au fost gasite. !!\n");
+    }
 }
 
 float pretulCalculatoareAcelasiBrand(Node *cap, const char *brandCautat)
@@ -394,6 +390,7 @@ int main()
     PC calculator4 = initializare(1003, "Lenovo Legion", "AMD e15", 32, 512, 870.30);
     PC calculator5 = initializare(3004, "Dell", "Intel i3", 16, 256, 456.44);
     PC calculator6 = initializare(3004, "MacBook Pro 2T", "Apple M3", 32, 512, 1099.99);
+    PC calculator7 = initializare(2044, "Lenovo Power Pro", "Inter i7 Turbo", 64, 1024, 1344.55);
 
     Node *cap = NULL;
 
@@ -403,13 +400,17 @@ int main()
     inserareInceputLista(&cap, calculator4);
     inserareSfarsitLista(&cap, calculator5);
     inserareInceputLista(&cap, calculator6);
-    printLista(cap);
+    inserareSfarsitLista(&cap, calculator7);
+    // printLista(cap);
 
     printf("\nPret Mediu este: %.2f $ \n", calculezaPretMediu(cap));
-    printf("\nPret Total al PC-urilor este: %.2f $ \n", pretulCalculatoareAcelasiBrand(cap, "Dell"));
+    printf("\nPretul PC-urilor al aceluiasi brand este: %.2f $ \n", pretulCalculatoareAcelasiBrand(cap, "Dell"));
 
-    printf("\nStergere Calculatoare dupa ID: 3004 \n");
-    stegereNodDupaPozitie(&cap, 3004);
+    printf("\n\n");
+
+    printLista(cap);
+    printf("\nStergere Node: -->>  dupa pozitie: \n");
+    stergereDupaPozitie(&cap, 2);
     printLista(cap);
 
     // createFileTxt(&calculator6, 6, "Pc-uri.txt");
