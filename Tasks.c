@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 // testing.....;
-// Task1 {Structura si functii};// Task 2 {Vectori};// Task 3;{Fisiere} // Task 5{Liste simple inlantuite....};
+// Task1 {Structura si functii};// Task 2 {Vectori};// Task 5{Liste simple inlantuite};
 typedef struct Calculator
 {
     int id;
@@ -243,7 +243,7 @@ void inserareSfarsitLista(Node **cap, PC calculator)
         (*cap) = nouNod;
     }
 }
-
+// serminar, laborator 4, liste inlantuite;
 float calculezaPretMediu(Node *cap)
 {
     float suma = 0;
@@ -260,7 +260,7 @@ float calculezaPretMediu(Node *cap)
     }
     return 0;
 }
-// Stergere node dupa pozitie specificata;
+// Functie care elimina un Nod, dupa pozitia specificata;
 void stergereDupaPozitie(Node **cap, int pozitie)
 {
     Node *temp = (*cap), *nodAnterior = NULL;
@@ -269,7 +269,7 @@ void stergereDupaPozitie(Node **cap, int pozitie)
     {
         return;
     }
-    // 'Cap' node sa fie sters, daca pozitia==1;
+    // Sterge Nod dupa pozitia 1;
     if (pozitie == 1)
     {
         (*cap) = temp->next;
@@ -277,13 +277,13 @@ void stergereDupaPozitie(Node **cap, int pozitie)
         free(temp);
         return;
     }
-    // Node sa fie sters la mijloc, traversare pana la pozitia pasata in fuctie;
+    // Parcurge lista pana la un Nod, care trebuie sters;
     for (int i = 1; temp != NULL && i < pozitie; i++)
     {
         nodAnterior = temp;
         temp = temp->next;
     }
-    // Daca pozitia nu este gasita, sterge Node;
+    // Stergere Nod gasit;
     if (temp != NULL)
     {
         nodAnterior->next = temp->next;
@@ -296,6 +296,74 @@ void stergereDupaPozitie(Node **cap, int pozitie)
     }
 }
 
+// Functie care insereaza un Nod si sorteaza dupa pret;(crescator);
+Node *inserareSortata(Node *newNode, Node *sortat)
+{
+    if (sortat == NULL ||
+        sortat->data.pret >= newNode->data.pret)
+    {
+        newNode->next = sortat;
+        sortat = newNode;
+    }
+    else
+    {
+        Node *nodCurent = sortat;
+
+        while (nodCurent->next != NULL && nodCurent->data.pret < newNode->data.pret)
+        {
+            nodCurent = nodCurent->next;
+        }
+        newNode->next = nodCurent->next;
+        nodCurent->next = newNode;
+    }
+    return sortat;
+}
+
+Node *insertionSort(Node *cap)
+{
+    Node *sortat = NULL;
+    Node *curent = cap;
+    while (curent != NULL)
+    {
+        Node *next = curent->next;
+        sortat = inserareSortata(curent, sortat);
+        curent = next;
+    }
+    return sortat;
+}
+
+// functie care salveaza obiecte din SLL, in vector(alocat dinamic);
+PC *calculatoarePretMic(Node *cap, float pret, int *contor)
+{
+    (*contor) = 0;
+    Node *aux = cap;
+    while (aux != NULL)
+    {
+        if (aux->data.pret <= pret)
+        {
+            (*contor)++;
+        }
+        aux = aux->next;
+    }
+
+    PC *pretMic = (PC *)malloc((*contor) * sizeof(PC));
+    int index = 0;
+    aux = cap;
+    while (aux != NULL)
+    {
+        if (aux->data.pret <= pret)
+        {
+            pretMic[index] = aux->data;
+            pretMic[index].brand = (char *)malloc((strlen(aux->data.brand) + 1) * sizeof(char));
+            strcpy(pretMic[index].brand, aux->data.brand);
+            index++;
+        }
+        aux = aux->next;
+    }
+    return pretMic;
+}
+
+// seminar liste inlantuite; laborator 4;
 float pretulCalculatoareAcelasiBrand(Node *cap, const char *brandCautat)
 {
     float suma = 0;
@@ -309,6 +377,64 @@ float pretulCalculatoareAcelasiBrand(Node *cap, const char *brandCautat)
         cap = cap->next;
     }
     return suma;
+}
+// interschimbare node-uri liste simpla inlantuite dupa Id;
+Node *interschimbareNoduri(Node *cap, int a_id, int b_id)
+{
+    // daca pozitiile (a==b),return 'cap' lista;
+    if (a_id == b_id)
+    {
+        return cap;
+    }
+    Node *prevA = NULL, *currA = NULL;
+    Node *prevB = NULL, *currB = NULL;
+    Node *prev = NULL, *curr = cap;
+
+    // un loop sa gaseasca pozitia 'a' si 'b';
+    while (curr != NULL)
+    {
+        if (curr->data.id == a_id)
+        {
+            prevA = prev;
+            currA = curr;
+        }
+        else if (curr->data.id == b_id)
+        {
+            prevB = prev;
+            currB = curr;
+        }
+        prev = curr;
+        curr = curr->next;
+    }
+    // daca pozitia 'a' si 'b' nu sunt prezente, return 'cap' listei;
+    if (currA == NULL || currB == NULL)
+    {
+        return cap;
+    }
+    // daca node-ul de pe pozitia 'a' nu e 'cap' de lista;
+    if (prevA != NULL)
+    {
+        prevA->next = currB;
+    }
+    else
+    {
+        cap = currB;
+    }
+    // daca node-ul de pe pozitia 'b' nu e 'cap' de list
+    if (prevB != NULL)
+    {
+        prevB->next = currA;
+    }
+    else
+    {
+        cap = currA;
+    }
+    // Schimbam legaturile pointer-ilor 'next';
+    Node *temp = currB->next;
+    currB->next = currA->next;
+    currA->next = temp;
+
+    return cap;
 }
 
 void printLista(Node *cap)
@@ -339,6 +465,12 @@ void dezalocareLista(Node **cap)
         pointer->data.brand = NULL;
     }
 }
+/// @brief
+void functieTest()
+{
+}
+/// @brief
+/// @return
 
 int main()
 {
@@ -409,12 +541,28 @@ int main()
     printf("\n\n");
 
     printLista(cap);
-    printf("\nStergere Node: -->>  dupa pozitie: \n");
+    printf("\nStergere Node: -->>  dupa pozitie:----------------------------------------------- \n");
     stergereDupaPozitie(&cap, 2);
+    printf("Id sters: %d \n", calculator4.id);
     printLista(cap);
+    printf("\n");
+    printf("\nInserare prin sortare crescatoare Linked list:--------------------------------------- \n");
+    Node *cap1 = insertionSort(cap);
+    printLista(cap1);
+    printf("\n");
+    printf("\nVector ce contine, obiecte PC cu pret <= 800 $---------------------------------------- \n");
+    int contor1 = 0;
+    PC *vectorPcPretMic = calculatoarePretMic(cap1, 800, &contor1);
+    displayVector(vectorPcPretMic, contor1);
 
-    // createFileTxt(&calculator6, 6, "Pc-uri.txt");
+    printLista(cap1); // afiseaza lista cu nodurile sortate crescator dupa 'pret';
+    printf("\nInterschimbare noduri in lista: primele doua pozitii, dupa ID:-------------------------- \n");
+    Node *cap2 = interschimbareNoduri(cap1, 3004, 1000);
+    printLista(cap2);
+    //  createFileTxt(&calculator6, 6, "Pc-uri.txt");
     dezalocareLista(&cap);
+    dezalocareLista(&cap1);
+    dezalocareLista(&cap2);
 
     return 0;
 }
