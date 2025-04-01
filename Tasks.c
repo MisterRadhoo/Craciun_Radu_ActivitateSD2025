@@ -309,7 +309,7 @@ Node *inserareSortata(Node *newNode, Node *sortat)
     {
         Node *nodCurent = sortat;
 
-        while (nodCurent->next != NULL && nodCurent->data.pret < newNode->data.pret)
+        while (nodCurent->next != NULL && nodCurent->next->data.pret < newNode->data.pret)
         {
             nodCurent = nodCurent->next;
         }

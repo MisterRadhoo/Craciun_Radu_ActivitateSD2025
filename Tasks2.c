@@ -73,8 +73,11 @@ void parcurgereInversa(LDI *lista)
 {
     printf("\nParcurgere inversa a Listei dublu inlantuite: -->>\n");
     Nod *p = lista->ultim;
+    int k = 0;
     while (p)
     {
+        printf("\nNumar Nod: %d\n", k);
+        k++;
         display(p->info);
         p = p->prev;
         printf("\n");
@@ -119,6 +122,46 @@ void inserareLaInceputLDI(LDI *lista, PC pc)
     }
     lista->prim = nou;
     lista->nrNoduri++;
+}
+// functie care sterge node din pozitia specificata;
+void stergereNodPozitieLDI(LDI *lista, int poz)
+{ // daca lista este goala;
+    if (lista->prim == NULL)
+    {
+        return;
+    }
+    Nod *curent = lista->prim;
+    // parcurgere lista pana la pozitia node-ului;
+    for (int i = 1; curent != NULL && i < poz; i++)
+    {
+        curent = curent->next;
+    }
+    // daca pozitia nu este gasita;
+    if (curent == NULL)
+    {
+        return;
+    }
+    // legatura cu node-ul anterior a fost actualizata;
+    if (curent->prev != NULL)
+    {
+        curent->prev->next = curent->next;
+    }
+    // legatura cu node-ul urmator a fost actualizata;
+    if (curent->next != NULL)
+    {
+        curent->next->prev = curent->prev;
+    }
+    // 'Cap' de lista, a fost actualizat;
+    if (lista->prim == curent)
+    {
+        lista->prim = curent->next;
+    }
+    if (curent->info.brand != NULL)
+    {
+        free(curent->info.brand);
+    }
+    free(curent);
+    lista->nrNoduri--;
 }
 // stergere nod dupa id;
 void stergereNodLDIdupaId(LDI *lista, int id)
@@ -223,6 +266,62 @@ char *getBrandCelMaiScumpPC(LDI *lista)
         return NULL;
     }
 }
+
+// Functie care insereaza un Nod si sorteaza dupa pret;(crescator);
+void insertionSort(LDI *lista)
+{
+
+    if (lista->prim == NULL || lista->prim->next == NULL)
+    {
+        return;
+    }
+    Nod *curent = lista->prim;
+    Nod *sortat = NULL;
+    // resetare ultim pointer;
+    lista->ultim = NULL;
+    while (curent != NULL)
+    {
+        Nod *next = curent->next;
+        // refacere legaturi;
+        curent->prev = curent->next = NULL;
+        // Inserare sortata in noua lista;
+        if (sortat == NULL || curent->info.pret < sortat->info.pret)
+        {
+            curent->next = sortat;
+            if (sortat != NULL)
+            {
+                sortat->prev = curent;
+            }
+            sortat = curent;
+        }
+        else
+        {
+            Nod *temp = sortat;
+            while (temp->next != NULL && temp->next->info.pret < curent->info.pret)
+            {
+                temp = temp->next;
+            }
+            curent->next = temp->next;
+            if (temp->next != NULL)
+            {
+                temp->next->prev = curent;
+            }
+            temp->next = curent;
+            curent->prev = temp;
+        }
+        curent = next;
+    }
+    // Actualizare lista originala;
+    lista->prim = sortat;
+    // Cautare ultim nod;
+    Nod *p = lista->prim;
+    while (p->next != NULL)
+    {
+        p = p->next;
+    }
+    lista->ultim = p;
+}
+
 int main()
 {
     // Liste dublu inlantuite;
@@ -234,6 +333,8 @@ int main()
     PC pc6 = initializare(204, "MacBook Pro 4P", "Apple M3", 32, 512, 1029.99);
     PC pc7 = initializare(205, "Lenovo Power Pro", "Inter i7 Turbo", 64, 1024, 1424.55);
     PC pc8 = initializare(206, "Toshiba Quad", "AMD Ryzen", 32, 1024, 724.85);
+    PC pc9 = initializare(301, "MSI Cyborg", "Intel Core i7", 16, 512, 830.99);
+    PC pc10 = initializare(303, "Alienware M18 R2", "Intel i9", 64, 2048, 2544.39);
 
     LDI lista;
     lista.prim = NULL;
@@ -247,6 +348,8 @@ int main()
     inserareLaInceputLDI(&lista, pc6);
     inserareLaInceputLDI(&lista, pc7);
     inserareLaSfarsitLDI(&lista, pc8);
+    inserareLaSfarsitLDI(&lista, pc9);
+    inserareLaInceputLDI(&lista, pc10);
     parcurgereLista(&lista);
     stergereNodLDIdupaId(&lista, 206);
     printf("\nPretul mediu al PC-urilor %.3f $:\n", calculeazaPretMediu(&lista));
@@ -258,6 +361,16 @@ int main()
     {
         free(brandPC);
     }
+    parcurgereLista(&lista);
+    printf("\nStergere Node dupa pozitia specificata: -->> \n");
+    stergereNodPozitieLDI(&lista, 3); // s-a sters obiect 'pc6' la struct;
+    parcurgereLista(&lista);
+
+    insertionSort(&lista);
+    printf("\n----------------------Sortare-crescatoare-Liste-Dublu-Inlantuite-(InsertionSort)---------\n");
+    parcurgereLista(&lista);
+    printf("\nParcurgere LDI sortata crescator, in mod invers: \n");
+    parcurgereInversa(&lista);
     dezalocareMemorieLDI(&lista);
     return 0;
 }
