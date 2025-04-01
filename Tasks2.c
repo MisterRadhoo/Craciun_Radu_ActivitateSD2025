@@ -59,21 +59,25 @@ void parcurgereLista(LDI *lista)
 {
     printf("\nLista dublu inlantuita are elementele: -->> \n");
     Nod *p = lista->prim;
+    int i = 0;
     while (p)
     {
+        printf("\nNumar Nod: %d\n", i);
+        i++;
         display(p->info);
         p = p->next;
-        printf("\n");
     }
 }
 
 void parcurgereInversa(LDI *lista)
 {
+    printf("\nParcurgere inversa a Listei dublu inlantuite: -->>\n");
     Nod *p = lista->ultim;
     while (p)
     {
         display(p->info);
         p = p->prev;
+        printf("\n");
     }
 }
 
@@ -81,7 +85,7 @@ void inserareLaSfarsitLDI(LDI *lista, PC pc)
 {
     Nod *nou = (Nod *)malloc(sizeof(Nod));
     nou->info = pc;
-    nou->info.brand = (char *)malloc(sizeof(Nod) * (strlen(pc.brand) + 1));
+    nou->info.brand = (char *)malloc(sizeof(char) * (strlen(pc.brand) + 1));
     strcpy(nou->info.brand, pc.brand);
     nou->next = NULL;
     nou->prev = lista->ultim;
@@ -101,7 +105,7 @@ void inserareLaInceputLDI(LDI *lista, PC pc)
 {
     Nod *nou = (Nod *)malloc(sizeof(Nod));
     nou->info = pc;
-    nou->info.brand = (char *)malloc((strlen(pc.brand) + 1) * sizeof(Nod));
+    nou->info.brand = (char *)malloc((strlen(pc.brand) + 1) * sizeof(char));
     strcpy(nou->info.brand, pc.brand);
     nou->next = lista->prim;
     nou->prev = NULL;
@@ -115,6 +119,50 @@ void inserareLaInceputLDI(LDI *lista, PC pc)
     }
     lista->prim = nou;
     lista->nrNoduri++;
+}
+// stergere nod dupa id;
+void stergereNodLDIdupaId(LDI *lista, int id)
+{
+    if (lista->prim == NULL)
+    {
+        return;
+    }
+    Nod *p = lista->prim;
+    while (p != NULL && p->info.id != id)
+    {
+        p = p->next;
+    }
+    if (p == NULL)
+    {
+        return;
+    }
+    // avem ce sa stergem ?
+    if (p->prev == NULL)
+    {
+        lista->prim = p->next;
+        if (lista->prim != NULL)
+        {
+            lista->prim->prev = NULL;
+        }
+    }
+    else
+    {
+        p->prev->next = p->next;
+    }
+    if (p->next != NULL)
+    {
+        p->next->prev = p->prev;
+    }
+    else
+    {
+        lista->ultim = p->prev;
+    }
+    if (p->info.brand != NULL)
+    {
+        free(p->info.brand);
+    }
+    free(p);
+    lista->nrNoduri--;
 }
 
 void dezalocareMemorieLDI(LDI *lista)
@@ -135,12 +183,52 @@ void dezalocareMemorieLDI(LDI *lista)
     lista->ultim = NULL;
     lista->nrNoduri = 0;
 }
+float calculeazaPretMediu(LDI *lista)
+{
+    if (lista->nrNoduri > 0)
+    {
+        float suma = 0;
+        Nod *p = lista->prim;
+        while (p != NULL)
+        {
+            suma += p->info.pret;
+            p = p->next;
+        }
+        return suma / lista->nrNoduri;
+    }
+    return 0;
+}
+char *getBrandCelMaiScumpPC(LDI *lista)
+{
+    if (lista->prim != NULL)
+    {
+        Nod *max = lista->prim;
+        Nod *p = lista->prim->next;
+
+        while (p != NULL)
+        {
+            if (p->info.pret > max->info.pret)
+            {
+                max = p;
+            }
+            p = p->next;
+        }
+
+        char *brand1 = (char *)malloc((strlen(max->info.brand)) + 1 * sizeof(char));
+        strcpy(brand1, max->info.brand);
+        return brand1;
+    }
+    else
+    {
+        return NULL;
+    }
+}
 int main()
 {
     // Liste dublu inlantuite;
     PC pc1 = initializare(100, "Asus NoteBook 3T", "Intel I9", 16, 256, 520.34);
     PC pc2 = initializare(101, "Acer Nitro 5", "AMD Duron x8", 32, 512, 640.00);
-    PC pc3 = initializare(102, "Dell", "Intel i9 Turbo", 64, 1024, 1282.89);
+    PC pc3 = initializare(102, "Dell Alienware", "Intel i9 Turbo", 64, 1024, 1282.89);
     PC pc4 = initializare(103, "Lenovo Legion", "AMD e15", 32, 512, 880.32);
     PC pc5 = initializare(104, "Dell", "Intel i3", 16, 256, 456.44);
     PC pc6 = initializare(204, "MacBook Pro 4P", "Apple M3", 32, 512, 1029.99);
@@ -150,9 +238,26 @@ int main()
     LDI lista;
     lista.prim = NULL;
     lista.ultim = NULL;
+    lista.nrNoduri = 0;
     inserareLaInceputLDI(&lista, pc1);
     inserareLaInceputLDI(&lista, pc2);
+    inserareLaInceputLDI(&lista, pc3);
+    inserareLaSfarsitLDI(&lista, pc4);
+    inserareLaSfarsitLDI(&lista, pc5);
+    inserareLaInceputLDI(&lista, pc6);
+    inserareLaInceputLDI(&lista, pc7);
+    inserareLaSfarsitLDI(&lista, pc8);
     parcurgereLista(&lista);
+    stergereNodLDIdupaId(&lista, 206);
+    printf("\nPretul mediu al PC-urilor %.3f $:\n", calculeazaPretMediu(&lista));
+    parcurgereInversa(&lista);
+
+    char *brandPC = getBrandCelMaiScumpPC(&lista);
+    printf("\nBrand PC, cel mai scump:-->> %s \n", brandPC);
+    if (brandPC != NULL)
+    {
+        free(brandPC);
+    }
     dezalocareMemorieLDI(&lista);
     return 0;
 }
