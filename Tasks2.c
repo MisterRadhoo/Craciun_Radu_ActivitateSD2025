@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
+// Task.6 {Liste dublu inlantuite};
 typedef struct Calculator
 {
     int id;
@@ -257,7 +257,7 @@ char *getBrandCelMaiScumpPC(LDI *lista)
             p = p->next;
         }
 
-        char *brand1 = (char *)malloc((strlen(max->info.brand)) + 1 * sizeof(char));
+        char *brand1 = (char *)malloc((strlen(max->info.brand) + 1) * sizeof(char));
         strcpy(brand1, max->info.brand);
         return brand1;
     }
@@ -282,7 +282,7 @@ void insertionSort(LDI *lista)
     while (curent != NULL)
     {
         Nod *next = curent->next;
-        // refacere legaturi;
+        // refacere legaturi; setam pointeri node-ului curent, 'prev' si 'next' cu NULL;
         curent->prev = curent->next = NULL;
         // Inserare sortata in noua lista;
         if (sortat == NULL || curent->info.pret < sortat->info.pret)
@@ -322,6 +322,74 @@ void insertionSort(LDI *lista)
     lista->ultim = p;
 }
 
+// Lista simpla inlantuita; structura;
+typedef struct LinkedList
+{
+    PC data;
+    struct LinkedList *next;
+
+} LL;
+
+void inserareInceput(LL **cap, PC c)
+{
+    LL *nou = (LL *)malloc(sizeof(LL));
+    nou->data = c;
+    nou->data.brand = (char *)malloc(sizeof(char) * (strlen(c.brand) + 1));
+    strcpy(nou->data.brand, c.brand);
+    nou->next = (*cap);
+    (*cap) = nou;
+}
+// Functie de imi returneaza obiecte PC cu pret sub 1000 %, sunt stocate in Liste simplu inlantuite;
+LL *obiectePCpretMic(LDI *lista, float pretSpecificat)
+{
+    LL *cap = NULL;
+    Nod *p = lista->prim;
+    while (p != NULL)
+    {
+        if (p->info.pret < pretSpecificat)
+        {
+            PC pc;
+            pc.id = p->info.id;
+            pc.brand = (char *)malloc(sizeof(char) * (strlen(p->info.brand) + 1));
+            strcpy(pc.brand, p->info.brand);
+            strncpy(pc.CPU, p->info.CPU, 50);
+            pc.CPU[49] = '\0';
+            pc.RAM = p->info.RAM;
+            pc.capacitate = p->info.capacitate;
+            pc.pret = p->info.pret;
+            inserareInceput(&cap, pc);
+        }
+        p = p->next;
+    }
+    return cap;
+}
+void printLL(LL *cap)
+{
+    printf("\nLista simpla inlantuita are elementele: \n");
+    LL *p = cap;
+    while (p != NULL)
+    {
+        printf("\n Id: %d, Brand PC: %s, Pret: %.2f :", p->data.id, p->data.brand, p->data.pret);
+        p = p->next;
+        printf("\n");
+    }
+}
+void dezalocareLL(LL **cap)
+{
+    while (*(cap) != NULL)
+    {
+        LL *p = *cap;
+        (*cap) = (*cap)->next;
+        if (p->data.brand != NULL)
+        {
+            free(p->data.brand);
+            printf("\nFree LL memory:\n");
+        }
+        free(p);
+        p->data.brand = NULL;
+    }
+}
+
 int main()
 {
     // Liste dublu inlantuite;
@@ -336,10 +404,12 @@ int main()
     PC pc9 = initializare(301, "MSI Cyborg", "Intel Core i7", 16, 512, 830.99);
     PC pc10 = initializare(303, "Alienware M18 R2", "Intel i9", 64, 2048, 2544.39);
 
+    // Initializare lista;
     LDI lista;
     lista.prim = NULL;
     lista.ultim = NULL;
     lista.nrNoduri = 0;
+
     inserareLaInceputLDI(&lista, pc1);
     inserareLaInceputLDI(&lista, pc2);
     inserareLaInceputLDI(&lista, pc3);
@@ -352,7 +422,7 @@ int main()
     inserareLaInceputLDI(&lista, pc10);
     parcurgereLista(&lista);
     stergereNodLDIdupaId(&lista, 206);
-    printf("\nPretul mediu al PC-urilor %.3f $:\n", calculeazaPretMediu(&lista));
+    printf("\nPretul mediu al PC-urilor %.2f $:\n", calculeazaPretMediu(&lista));
     parcurgereInversa(&lista);
 
     char *brandPC = getBrandCelMaiScumpPC(&lista);
@@ -371,6 +441,24 @@ int main()
     parcurgereLista(&lista);
     printf("\nParcurgere LDI sortata crescator, in mod invers: \n");
     parcurgereInversa(&lista);
+
+    printf("\nAfisare PC-uri ce au pret sub 1000 $, stocate in lista simplu inlantuita: \n");
+    LL *capPC = obiectePCpretMic(&lista, 1000.00);
+    printLL(capPC);
+
     dezalocareMemorieLDI(&lista);
+    dezalocareLL((&capPC));
     return 0;
 }
+
+/*** Diferenta intre Vectori si Liste Simplu Inlantuite ***/ //;
+
+/***   In memorie, elementele vectorilor sunt stocate in locatii adiacente;  ***/
+/***   Liste simplu inlantuite, elementele nu sunt stocate in locatii adiacente;  ***/
+/***   Vectorii au dimensiune fixa, Liste simplu inlantuite au memorie dinamica  ***/
+/***   Vectorii stocheaza doar elemente fara referinta, pentru acest lucru, trebuie un pointer suplimentar;  ***/
+/***   Listele simplu inlantuite, stocheaza datele, cat si adresa urmatoare a urmatorului node, prin pointer;  ***/
+/***   Accesarea elementelor in vector, are un timp de constanta O(1) ;***/
+/***   Accesarea elementelor in Liste, se mai face mai intai prin parcurgerea listei(toate nodurile, pana ajugem la nodul dorit), timpul fiind O(n)***/
+/***   Inserarea si stergerea elementelor din vector e mai inceata, timp (O(n) la cap de vector; ***/
+/***   La liste, inserarea si stergerea elementelor este mai rapida, la cap de lista este complexitate de timp de (O(1)); ***/
