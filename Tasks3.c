@@ -83,6 +83,69 @@ void inserareSfarsitLista(Nod **cap, C c)
         (*cap) = nouNod;
     }
 }
+// stergere Nod lista dupa id+anConstructie;
+void stergeNodLista(Nod **cap, int id, int anConstructie)
+{
+    if ((*cap) != NULL)
+    {
+        if ((*cap)->info.idUnic == id && (*cap)->info.anulConstruirii == anConstructie)
+        {
+            Nod *p = (*cap);
+            (*cap) = (*cap)->next;
+            free(p->info.numeCladire);
+            free(p);
+        }
+        else
+        {
+            Nod *p = (*cap);
+            while (p->next != NULL && (p->next->info.idUnic != id || p->next->info.anulConstruirii != anConstructie))
+            {
+                p = p->next;
+            }
+            if (p->next == NULL)
+            {
+                printf("Cladirea cu Id si an constructie: --->> [%d], [%d] NU EXISTA. \n", id, anConstructie);
+                return;
+            }
+            Nod *aux = p->next;
+            p->next = p->next->next;
+            free(aux->info.numeCladire);
+            free(aux);
+        }
+    }
+}
+// functie care sterge Nod din lista dupa'id';
+void removeNodById(Nod **cap, int id)
+{
+    if ((*cap) != NULL)
+    {
+        if ((*cap)->info.idUnic == id)
+        {
+            Nod *p = (*cap);
+            (*cap) = (*cap)->next;
+            free(p->info.numeCladire);
+            free(p);
+        }
+        else
+        {
+            Nod *p = (*cap);
+            while (p->next != NULL && p->next->info.idUnic != id)
+            {
+                p = p->next;
+            }
+            if (p->next == NULL)
+            {
+                printf("Node Id: -->> [%d] nu exista. \n", id);
+                return;
+            }
+            Nod *aux = p->next;
+            p->next = p->next->next;
+            free(aux->info.numeCladire);
+            free(aux);
+        }
+    }
+}
+
 HT initializareHashTable(int dimensiune)
 {
     HT ht;
@@ -119,9 +182,34 @@ void inserareHashTable(HT ht, C cladire)
         }
     }
 }
+// stergere Element HT, dupa id+anConstructie;
+void stergereElementHashTable(HT ht, int id, int an)
+{
+    int index = calculeazaHash(an, ht.dimensiune);
+    if (index < 0 || index >= ht.dimensiune)
+    {
+        printf("\nIndex de negasit.\n");
+    }
+    else
+    {
+        stergeNodLista(&(ht.vector[index]), id, an);
+    }
+}
+// stergere Element HT, dupa id;
+void removeElementFromHTbyId(HT ht, int id)
+{
+    for (int i = 0; i < ht.dimensiune; i++)
+    {
+        if (ht.vector[i] != NULL)
+        {
+            removeNodById(&(ht.vector[i]), id);
+        }
+    }
+}
 
 void afisareHashTable(HT ht)
 {
+    printf("\n Structura de date HASH TABLE are elementele: \n");
     for (int i = 0; i < ht.dimensiune; i++)
     {
         printf("\n Cluster avand index: -->>> [%d]. \n", i);
@@ -155,7 +243,7 @@ void stergeHashTableMemory(HT *ht)
     ht->vector = NULL;
     ht->dimensiune = 0;
 }
-void afisareCladiriListeAn(Nod *cap, int anCladire)
+void afisareCladiriListaAn(Nod *cap, int anCladire)
 {
     Nod *p = cap;
     while (p != NULL)
@@ -166,7 +254,7 @@ void afisareCladiriListeAn(Nod *cap, int anCladire)
         }
         else
         {
-            printf("\n NULL \n");
+            printf("\n Nu s-a gasit. \n");
         }
 
         p = p->next;
@@ -177,7 +265,7 @@ void afisareCladiriClusterDupaAn(HT ht, int an)
     int pozitie = calculeazaHash(an, ht.dimensiune);
     if (ht.vector[pozitie] != NULL)
     {
-        afisareCladiriListeAn(ht.vector[pozitie], an);
+        afisareCladiriListaAn(ht.vector[pozitie], an);
     }
 }
 
@@ -210,9 +298,27 @@ int main()
     inserareHashTable(ht, c10);
     // afisareHashTable(ht);
 
-    afisareCladiriClusterDupaAn(ht, 1989);
+    printf("\nAfisare cladire dupa an de constructie. \n");
+    afisareCladiriClusterDupaAn(ht, 2012);
+    printf("\n Stergere elemente din HashTable dupa //id + anConstructie// cladire: \n");
+    stergereElementHashTable(ht, 21, 1989);
+    stergereElementHashTable(ht, 20, 1808);
+    stergereElementHashTable(ht, 10, 1478);
+    afisareHashTable(ht);
+    printf("\n Stergere element din Hash Table dupa // id //....\n");
+    removeElementFromHTbyId(ht, 15);
+    removeElementFromHTbyId(ht, 16);
+    removeElementFromHTbyId(ht, 17);
+    removeElementFromHTbyId(ht, 18);
+    afisareHashTable(ht);
+
     stergeHashTableMemory(&ht);
     // afisareHashTable(ht);
 
     return 0;
 }
+
+// Functia care sterge un element dupa (id+anConstructie) cladire din structura de date HashTable, are timp de complexitate constant, adica O(1);
+// nu trebuie sa parcurgi tot vectorul pana la index-ul specificat dupa key si valoare;
+// Functia care sterge un element dupa 'id' cladire din HashTable, are timp de complexitate O(n), pentru ca trebuie sa traverseze tot vectorul,
+// pana gaseste (id-ul cladirei) in structura;

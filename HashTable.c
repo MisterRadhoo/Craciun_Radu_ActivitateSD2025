@@ -152,7 +152,7 @@ void stergereElemHashTable(HT ht, O ochelariVechi)
     int index = calculeazaHash(ochelariVechi.brand, ochelariVechi.id, ht.capacitate);
     if (index < 0 || index >= ht.capacitate)
     {
-        printf("\n Cheia nu exista. \n");
+        printf("\n Index invalid. \n");
     }
     else
     {
@@ -314,23 +314,24 @@ int main()
     O idO = getOchelariDupaIdHT(ht, 99);
     if (idO.id == 99)
     {
-        printf("ID's matched. %d \n", idO.id);
+        printf("\nID's matched. %d \n", idO.id);
     }
     else
     {
-        printf("ID's not found \n");
+        printf("\nID's not found \n");
     }
 
     // afisareHashTable(ht);
     printf("\n");
     afisareHashTable(ht);
 
-    printf("Pret total pe clustere <<Hash Table>>;  \n");
+    printf("\nPret total pe clustere <<Hash Table>>;  \n");
     int nrClustere = 3;
     float **M = sumaPreturilorUnuiCluster(ht, &nrClustere);
     int nrLinii = 2;
     afisareMatrice(M, nrClustere, 2);
     dezalocareM(&M, &nrLinii, &nrClustere);
+
     freeMemoryHT(&ht);
     return 0;
 }
