@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
-// Task.8{HashTable.....};
+// Task.8{HashTable};
 
 typedef struct Cladire
 {
@@ -225,6 +225,7 @@ void removeElementFromHTbyId(HT ht, int id)
         }
     }
 }
+
 C *initObiecteLista(Nod *cap, int anConstructie, int *dimensiune)
 {
     (*dimensiune) = 0;
@@ -252,6 +253,37 @@ C *initObiecteLista(Nod *cap, int anConstructie, int *dimensiune)
         p = p->next;
     }
     return vectorCladiri;
+}
+// functie care modifica anulConstructiei initial, cu un nou An de constructie;
+void modificaAnCladire(Nod *cap, int idC, int anNou)
+{
+    Nod *p = cap;
+    while (p != NULL)
+    {
+        if (p->info.idUnic == idC)
+        {
+            p->info.anulConstruirii = anNou;
+            printf("Cladirea cu Id [%d] a fost modificat la anul [%d].  \n", idC, anNou);
+        }
+        p = p->next;
+    }
+}
+
+void modificaAnCladireHashTable(HT ht, int idCladire, int anConstruireVechi, int anNou)
+{
+    if (ht.vector == NULL)
+    {
+        return;
+    }
+    int pozitie = calculeazaHash(anConstruireVechi, ht.dimensiune);
+    if (ht.vector[pozitie] != NULL)
+    {
+        modificaAnCladire(ht.vector[pozitie], idCladire, anNou);
+    }
+    else
+    {
+        printf("\n Cladirea nu s-a gazit in cluster. \n");
+    }
 }
 
 void afisareHashTable(HT ht)
@@ -290,6 +322,7 @@ void stergeHashTableMemory(HT *ht)
     ht->vector = NULL;
     ht->dimensiune = 0;
 }
+
 void afisareCladiriListaAn(Nod *cap, int anCladire)
 {
     Nod *p = cap;
@@ -307,6 +340,7 @@ void afisareCladiriListaAn(Nod *cap, int anCladire)
         p = p->next;
     }
 }
+
 void afisareCladiriClusterDupaAn(HT ht, int an)
 {
     int pozitie = calculeazaHash(an, ht.dimensiune);
@@ -365,7 +399,13 @@ int main()
     C *cladiri = initObiecteLista(listaCluster, 1907, &dimensiune);
     printf("\nVectori cu cladiri ce au celasi an de constructie: [%d] \n", cladiri->anulConstruirii);
     afisareVecor(cladiri, dimensiune);
-
+    printf("\n");
+    printf("\nModificare anul constructiei unei cladiri. \n");
+    modificaAnCladireHashTable(ht, 14, 1939, 2015);
+    modificaAnCladireHashTable(ht, 19, 1957, 2021);
+    inserareHashTable(ht, c3);
+    inserareHashTable(ht, c8);
+    afisareHashTable(ht);
     dezalocareVector(&cladiri, &dimensiune);
     stergeHashTableMemory(&ht);
     // afisareHashTable(ht);
