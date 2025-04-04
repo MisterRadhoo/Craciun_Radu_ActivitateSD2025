@@ -29,6 +29,25 @@ void afisareCladire(C c)
     printf("Cladire id:-->> { %d }, Anul in care s-a construit cladirea: -->>[ %d ] \n", c.idUnic, c.anulConstruirii);
     printf("Nume cladire: -->> { %s }, Numar etaje cladire: -->>[ %d ] etaj/e. \n", c.numeCladire, c.numarEtaje);
 }
+void afisareVecor(C *cladiri, int dimensiune)
+{
+    for (int i = 0; i < dimensiune; i++)
+    {
+        afisareCladire(cladiri[i]);
+        printf("\n");
+    }
+}
+void dezalocareVector(C **c, int *dimensiune)
+{
+    for (int i = 0; i < *dimensiune; i++)
+    {
+        free((*c)[i].numeCladire);
+        printf("\nFree vector cladire.\n");
+    }
+    free((*c));
+    (*c) = NULL;
+    *dimensiune = 0;
+}
 
 typedef struct Nod
 {
@@ -206,6 +225,34 @@ void removeElementFromHTbyId(HT ht, int id)
         }
     }
 }
+C *initObiecteLista(Nod *cap, int anConstructie, int *dimensiune)
+{
+    (*dimensiune) = 0;
+    Nod *p = cap;
+    while (p != NULL)
+    {
+        if (p->info.anulConstruirii == anConstructie)
+        {
+            (*dimensiune)++;
+        }
+        p = p->next;
+    }
+    C *vectorCladiri = (C *)malloc(sizeof(C) * (*dimensiune));
+    int contor = 0;
+    p = cap;
+    while (p != NULL)
+    {
+        if (p->info.anulConstruirii == anConstructie)
+        {
+            vectorCladiri[contor] = p->info;
+            vectorCladiri[contor].numeCladire = (char *)malloc((strlen(p->info.numeCladire) + 1) * sizeof(char));
+            strcpy(vectorCladiri[contor].numeCladire, p->info.numeCladire);
+            contor++;
+        }
+        p = p->next;
+    }
+    return vectorCladiri;
+}
 
 void afisareHashTable(HT ht)
 {
@@ -312,6 +359,14 @@ int main()
     removeElementFromHTbyId(ht, 18);
     afisareHashTable(ht);
 
+    int dimensiune = 0;
+    int index = calculeazaHash(1907, ht.dimensiune);
+    Nod *listaCluster = ht.vector[index];
+    C *cladiri = initObiecteLista(listaCluster, 1907, &dimensiune);
+    printf("\nVectori cu cladiri ce au celasi an de constructie: [%d] \n", cladiri->anulConstruirii);
+    afisareVecor(cladiri, dimensiune);
+
+    dezalocareVector(&cladiri, &dimensiune);
     stergeHashTableMemory(&ht);
     // afisareHashTable(ht);
 
