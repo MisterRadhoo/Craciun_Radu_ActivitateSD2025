@@ -79,6 +79,8 @@ void inserareInceputLista(Nod **cap, C c)
 {
     Nod *nou = (Nod *)malloc(sizeof(Nod));
     nou->info = c; // shallow copy
+    nou->info.numeCladire = (char *)malloc((strlen(c.numeCladire) + 1) * sizeof(char));
+    strcpy(nou->info.numeCladire, c.numeCladire);
     nou->next = (*cap);
     (*cap) = nou;
 }
@@ -87,6 +89,8 @@ void inserareSfarsitLista(Nod **cap, C c)
 {
     Nod *nouNod = (Nod *)malloc(sizeof(Nod));
     nouNod->info = c; // shallow copy;
+    nouNod->info.numeCladire = (char *)malloc((strlen(c.numeCladire) + 1) * sizeof(char));
+    strcpy(nouNod->info.numeCladire, c.numeCladire);
     nouNod->next = NULL;
     if ((*cap) != NULL)
     {
@@ -192,7 +196,12 @@ void inserareHashTable(HT ht, C cladire)
         if (ht.vector[index] == NULL)
         {
             ht.vector[index] = (Nod *)malloc(sizeof(Nod));
-            ht.vector[index]->info = cladire;
+            ht.vector[index]->info.idUnic = cladire.idUnic;
+            ht.vector[index]->info.anulConstruirii = cladire.anulConstruirii;
+            ht.vector[index]->info.numeCladire = (char *)malloc((strlen(cladire.numeCladire) + 1) * sizeof(char));
+            strcpy(ht.vector[index]->info.numeCladire, cladire.numeCladire);
+            ht.vector[index]->info.numarEtaje = cladire.numarEtaje;
+            // ht.vector[index]->info = cladire;  // shallow copy;
             ht.vector[index]->next = NULL;
         }
         else
