@@ -154,6 +154,53 @@ void inserareLaSfarsit(Node **cap, A adidas)
     }
 }
 
+void inserareLaMijloc(Node **nodAnterior, A adidas)
+{
+    if ((*nodAnterior) == NULL)
+    {
+        printf("Nodul anterior nu poate fi NULL. ");
+        return;
+    }
+    Node *nouNode = (Node *)malloc(sizeof(Node));
+    nouNode->data = adidas;
+    nouNode->data.brand = (char *)malloc((strlen(adidas.brand) + 1) * sizeof(char));
+    strcpy(nouNode->data.brand, adidas.brand);
+    nouNode->next = (*nodAnterior)->next;
+    (*nodAnterior)->next = nouNode;
+}
+
+void stergeNode(Node **cap, int id)
+{
+    if ((*cap) != NULL)
+    {
+        if ((*cap)->data.id == id)
+        {
+            Node *aux = (*cap);
+            (*cap) = (*cap)->next;
+            free(aux->data.brand);
+            free(aux);
+        }
+        else
+        {
+            Node *p = (*cap);
+            while (p->next != NULL && p->next->data.id != id)
+            {
+
+                p = p->next;
+            }
+            if (p->next == NULL)
+            {
+                printf("id-ul: -->> [%d] nu exista. \n ", id);
+            }
+
+            Node *aux = p->next;
+            p->next = p->next->next; // stergere Node;
+            free(aux->data.brand);
+            free(aux);
+        }
+    }
+}
+
 void printLista(Node *cap)
 {
     printf("\nLista are urmatoarele elemente: \n");
@@ -179,6 +226,55 @@ void stergereLista(Node **cap)
         }
         free(p);
     }
+    (*cap) = NULL;
+}
+float calcPretMediu(Node *cap)
+{
+    float suma = 0;
+    int contor = 0;
+    while (cap != NULL)
+    {
+        suma += cap->data.pretUnitar;
+        contor++;
+        cap = cap->next;
+    }
+    if (contor > 0)
+    {
+        return suma / contor;
+    }
+    return 0;
+}
+void modificarePret(Node *cap, int id, float pretNou)
+{
+    Node *temp = cap;
+    while (temp != NULL)
+    {
+        if (temp->data.id == id)
+        {
+            temp->data.pretUnitar = pretNou;
+            printf("Produsul cu id: [%d], a fost modificat, \nNoul Pret este de: [%.2f] lei. \n", id, pretNou);
+        }
+        temp = temp->next;
+    }
+}
+
+// get product by id;
+A getAdidasById(Node *cap, int id)
+{
+    while (cap != NULL)
+    {
+        if (cap->data.id == id)
+        {
+            return cap->data;
+        }
+        else
+        {
+            cap = cap->next;
+        }
+    }
+    A adidas;
+    adidas.id = -1;
+    return adidas;
 }
 
 int main()
@@ -189,6 +285,7 @@ int main()
     A a3 = initializare(3333, "Nike Sb x Futura", 42.5, 1899.99);
     A a4 = initializare(4444, "Nike Sb Asparagus", 42.5, 799.99);
     A a5 = initializare(8888, "Nike Sb x Parra", 42.5, 2000.15);
+    A a6 = initializare(9999, "Air Jordan Low OG", 43.0, 899.00);
     // sa se initialize un vector alocat dinamic.
     int nrAdidasi = 4;
     A *adidasi;
@@ -220,7 +317,18 @@ int main()
     inserareLaInceput(&head, a3);
     inserareLaInceput(&head, a4);
     inserareLaSfarsit(&head, a5);
+    inserareLaMijloc(&head->next->next->next, a6);
     printLista(head);
+    stergeNode(&head, 1111);
+    printf("\nLista dupa stergere id: 1111: \n");
+    printLista(head);
+
+    float pretM = calcPretMediu(head);
+    printf("\nPret Mediu: -->> [ %.2f] lei \n", pretM);
+    modificarePret(head, 3333, 1499.99);
+
+    A adidasId = getAdidasById(head, 3333);
+    printAdidas(adidasId);
 
     return 0;
 }
