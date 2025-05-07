@@ -316,7 +316,6 @@ void stergereLista(Nod **cap)
             free(p->info.numeCladire);
         }
         free(p);
-        p->info.numeCladire = NULL;
     }
 }
 
