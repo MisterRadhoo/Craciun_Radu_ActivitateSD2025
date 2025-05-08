@@ -65,12 +65,12 @@ void inserareLaSfarsit(Node **cap, S sticla)
     Node *nouNode = (Node *)malloc(sizeof(Node));
     nouNode->data.id = sticla.id;
     nouNode->data.nume = (char *)malloc((strlen(sticla.nume) + 1) * sizeof(char));
+    strcpy(nouNode->data.nume, sticla.nume);
     strncpy(nouNode->data.tipBautura, sticla.tipBautura, 40);
     nouNode->data.tipBautura[39] = '\0';
     nouNode->data.capacitate = sticla.capacitate;
-    strcpy(nouNode->data.nume, sticla.nume);
-
     nouNode->next = NULL;
+
     if ((*cap) != NULL)
     {
         Node *p = (*cap);
@@ -164,6 +164,23 @@ void stergereLista(Node **cap)
     }
     (*cap) = NULL;
 }
+
+float medieCap(Node *cap)
+{
+    float suma = 0;
+    int contor = 0;
+    while (cap != NULL)
+    {
+        suma += cap->data.capacitate;
+        contor++;
+        cap = cap->next;
+    }
+    if (contor > 0)
+    {
+        return suma / contor;
+    }
+    return 0;
+}
 // implementare HashTable;
 
 typedef struct HashTable
@@ -248,6 +265,36 @@ void inserareNodHT(HT ht, S sticla)
         }
     }
 }
+S getNumeSticla(Node *cap, const char *numeCautat)
+{
+    Node *p = cap;
+    while (p != NULL)
+    {
+        if (strcmp(p->data.nume, numeCautat) == 0)
+        {
+            return p->data;
+        }
+        p = p->next;
+    }
+    S s = {-1, NULL, "/", 0};
+    printSticla(s);
+    return s;
+}
+
+S getNumeSticlaHT(HT ht, const char *numeCautat)
+{
+    S sticla;
+    for (int i = 0; i < ht.dimensiune; i++)
+    {
+        sticla = getNumeSticla(ht.vector[i], numeCautat);
+        if (sticla.nume != NULL && strcmp(sticla.nume, numeCautat) == 0)
+        {
+            return sticla;
+        }
+    }
+
+    return sticla;
+}
 
 int main()
 {
@@ -273,7 +320,7 @@ int main()
     inserareNodHT(ht, s6);
     printHT(ht);
 
-    dezalocareHT(&ht);
+    // dezalocareHT(&ht);
 
     Node *head = NULL;
 
@@ -285,6 +332,15 @@ int main()
     inserareLaSfarsit(&head, s5);
     inserareLaSfarsit(&head, s6);
     printLista(head);
+    float mediaCap = medieCap(head);
+    printf("\nMedia [ %.2f ] ml \n", mediaCap);
+
+    S getNume = getNumeSticla(head, "Burn Sun");
+    printSticla(getNume);
+
+    S getNumeHT = getNumeSticlaHT(ht, "Burn Sun");
+    printSticla(getNumeHT);
+
     stergereLista(&head);
     dezalocareSticla(&s);
     dezalocareSticla(&s1);
