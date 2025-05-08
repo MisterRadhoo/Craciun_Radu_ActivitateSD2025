@@ -223,6 +223,7 @@ void stergereLista(Node **cap)
         if (p->data.brand != NULL)
         {
             free(p->data.brand);
+            p->data.brand = NULL;
             printf("\nfree....\n");
         }
         free(p);

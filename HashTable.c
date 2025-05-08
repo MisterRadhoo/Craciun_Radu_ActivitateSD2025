@@ -71,7 +71,6 @@ void afisareLista(Nod *cap)
 {
     while (cap)
     {
-
         afisare(cap->data);
         cap = cap->next;
     }

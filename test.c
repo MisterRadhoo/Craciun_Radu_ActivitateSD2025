@@ -35,7 +35,7 @@ void dezalocareSticla(S *s)
     {
         free(s->nume);
         s->nume = NULL;
-        printf("\nFree sticla memory..... \n");
+        // printf("\nFree sticla memory..... \n");
     }
 }
 
@@ -50,18 +50,26 @@ typedef struct Node
 void inserareLaInceput(Node **cap, S sticla)
 {
     Node *nouNode = (Node *)malloc(sizeof(Node));
-    nouNode->data = sticla;
-    nouNode->data.nume = (char *)malloc((strlen(sticla.nume) + 1) * sizeof(Node));
-    strcpy(nouNode->data, sticla.nume);
+    nouNode->data.id = sticla.id;
+    nouNode->data.nume = (char *)malloc((strlen(sticla.nume) + 1) * sizeof(char));
+    strcpy(nouNode->data.nume, sticla.nume);
+    strncpy(nouNode->data.tipBautura, sticla.tipBautura, 40);
+    nouNode->data.tipBautura[39] = '\0';
+    nouNode->data.capacitate = sticla.capacitate;
     nouNode->next = (*cap);
     (*cap) = nouNode;
 }
+
 void inserareLaSfarsit(Node **cap, S sticla)
 {
     Node *nouNode = (Node *)malloc(sizeof(Node));
-    nouNode->data = sticla;
+    nouNode->data.id = sticla.id;
     nouNode->data.nume = (char *)malloc((strlen(sticla.nume) + 1) * sizeof(char));
+    strncpy(nouNode->data.tipBautura, sticla.tipBautura, 40);
+    nouNode->data.tipBautura[39] = '\0';
+    nouNode->data.capacitate = sticla.capacitate;
     strcpy(nouNode->data.nume, sticla.nume);
+
     nouNode->next = NULL;
     if ((*cap) != NULL)
     {
@@ -77,6 +85,7 @@ void inserareLaSfarsit(Node **cap, S sticla)
         (*cap) = nouNode;
     }
 }
+
 void inserareLaMijloc(Node *nodAnterior, S sticla)
 {
     if (nodAnterior == NULL)
@@ -85,13 +94,46 @@ void inserareLaMijloc(Node *nodAnterior, S sticla)
         return;
     }
     Node *nouNode = (Node *)malloc(sizeof(Node));
-    nouNode->data = sticla;
+    nouNode->data.id = sticla.id;
     nouNode->data.nume = (char *)malloc((strlen(sticla.nume) + 1) * sizeof(char));
     strcpy(nouNode->data.nume, sticla.nume);
-    nouNode->next = nodAnterior->next; // se fac legaturile pointer-ilor;
+    strncpy(nouNode->data.tipBautura, sticla.tipBautura, 40);
+    nouNode->data.tipBautura[39] = '\0';
+    nouNode->data.capacitate = sticla.capacitate;
+    nouNode->next = nodAnterior->next; // se fac legaturile;
     nodAnterior->next = nouNode;
 }
-void stergereNod(Node **cap, int id) {}
+
+void stergereNod(Node **cap, int id)
+{
+    if ((*cap) != NULL)
+    {
+        if ((*cap)->data.id == id)
+        {
+            Node *p = (*cap);
+            (*cap) = (*cap)->next; // sterge Node;
+            free(p->data.nume);
+            free(p);
+        }
+        else
+        {
+            Node *p = (*cap);
+            while (p->next != NULL && p->next->data.id != id)
+            {
+                p = p->next;
+            }
+            if (p->next == NULL)
+            {
+                printf("\nId: -->> [ %d ] nu exista. \n", id);
+                return;
+            }
+            Node *aux = p->next;
+            p->next = p->next->next; // stergere Nod;
+            free(aux->data.nume);
+            free(aux);
+        }
+    }
+}
 
 // parcurgere Lista;
 void printLista(Node *cap)
@@ -115,11 +157,96 @@ void stergereLista(Node **cap)
         if (p->data.nume != NULL)
         {
             free(p->data.nume);
-            printf("\nFree memory lista......\n");
+            p->data.nume = NULL;
+            // printf("\nFree memory lista......\n");
         }
         free(p);
     }
     (*cap) = NULL;
+}
+// implementare HashTable;
+
+typedef struct HashTable
+{
+    int dimensiune;
+    Node **vector; // array;
+
+} HT;
+
+// initializare HashTable;
+HT initializareHT(int dimensiune)
+{
+    HT ht;
+    ht.dimensiune = dimensiune;
+    ht.vector = (Node **)malloc(dimensiune * sizeof(Node *));
+    for (int i = 0; i < ht.dimensiune; i++)
+    {
+        ht.vector[i] = NULL;
+    }
+    return ht;
+}
+
+void printHT(HT ht)
+{
+    for (int i = 0; i < ht.dimensiune; i++)
+    {
+
+        printf("\nHasHTable Cluster [ %d ]: --->> \n", i);
+        printLista(ht.vector[i]);
+    }
+}
+
+void dezalocareHT(HT *ht)
+{
+    for (int i = 0; i < ht->dimensiune; i++)
+    {
+        stergereLista(&(ht->vector[i]));
+        printf("\nHT free. \n");
+    }
+    free(ht->vector);
+    ht->vector = NULL;
+    ht->dimensiune = 0;
+}
+// functie hash 1: id + dimensiune;
+int hashOneHT(int id, int dimensiune)
+{
+    return (id % dimensiune);
+}
+
+// functie hash 2:  id + char*nume;
+int hashTwoHT(const char *nume, int id, int dimensiune)
+{
+    int suma = 0;
+    for (int i = 0; i < strlen(nume); i++)
+    {
+        suma += nume[i];
+    }
+    suma += id;
+    return (dimensiune > 0 ? (suma % dimensiune) : -1);
+}
+
+// inserare noduri in HashTable;
+void inserareNodHT(HT ht, S sticla)
+{
+    int index = hashTwoHT(sticla.nume, sticla.id, ht.dimensiune);
+    if (index >= 0 && index < ht.dimensiune)
+    {
+        if (ht.vector[index] == NULL)
+        {
+            ht.vector[index] = (Node *)malloc(sizeof(Node));
+            ht.vector[index]->data.id = sticla.id;
+            ht.vector[index]->data.nume = (char *)malloc((strlen(sticla.nume) + 1) * sizeof(char));
+            strcpy(ht.vector[index]->data.nume, sticla.nume);
+            strncpy(ht.vector[index]->data.tipBautura, sticla.tipBautura, 40);
+            ht.vector[index]->data.tipBautura[39] = '\0';
+            ht.vector[index]->data.capacitate = sticla.capacitate;
+            ht.vector[index]->next = NULL;
+        }
+        else
+        { // coliziuni;
+            inserareLaInceput(&(ht.vector[index]), sticla);
+        }
+    }
 }
 
 int main()
@@ -133,6 +260,35 @@ int main()
     S s6 = initializare(8888, "Bacardi", "Gin", 0.88);
     // printSticla(s);
     //  dezalocareSticla(&s);
+
+    HT ht = initializareHT(10);
+    // printHT(ht);
+
+    inserareNodHT(ht, s);
+    inserareNodHT(ht, s1);
+    inserareNodHT(ht, s2);
+    inserareNodHT(ht, s3);
+    inserareNodHT(ht, s4);
+    inserareNodHT(ht, s5);
+    inserareNodHT(ht, s6);
+    printHT(ht);
+
+    dezalocareHT(&ht);
+
+    Node *head = NULL;
+
+    inserareLaInceput(&head, s);
+    inserareLaInceput(&head, s1);
+    inserareLaInceput(&head, s2);
+    inserareLaMijloc(head->next->next, s3);
+    inserareLaMijloc(head->next, s4);
+    inserareLaSfarsit(&head, s5);
+    inserareLaSfarsit(&head, s6);
+    printLista(head);
+    stergereLista(&head);
+    dezalocareSticla(&s);
+    dezalocareSticla(&s1);
+    dezalocareSticla(&s3);
 
     return 0;
 }
