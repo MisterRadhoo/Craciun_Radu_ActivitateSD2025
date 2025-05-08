@@ -191,6 +191,7 @@ void stergeNode(Node **cap, int id)
             if (p->next == NULL)
             {
                 printf("id-ul: -->> [%d] nu exista. \n ", id);
+                return;
             }
 
             Node *aux = p->next;
