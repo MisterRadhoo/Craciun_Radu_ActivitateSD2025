@@ -154,9 +154,9 @@ void inserareLaSfarsit(Node **cap, A adidas)
     }
 }
 
-void inserareLaMijloc(Node **nodAnterior, A adidas)
+void inserareLaMijloc(Node *nodAnterior, A adidas)
 {
-    if ((*nodAnterior) == NULL)
+    if (nodAnterior == NULL)
     {
         printf("Nodul anterior nu poate fi NULL. ");
         return;
@@ -165,8 +165,8 @@ void inserareLaMijloc(Node **nodAnterior, A adidas)
     nouNode->data = adidas;
     nouNode->data.brand = (char *)malloc((strlen(adidas.brand) + 1) * sizeof(char));
     strcpy(nouNode->data.brand, adidas.brand);
-    nouNode->next = (*nodAnterior)->next;
-    (*nodAnterior)->next = nouNode;
+    nouNode->next = nodAnterior->next;
+    nodAnterior->next = nouNode;
 }
 
 void stergeNode(Node **cap, int id)
@@ -318,7 +318,7 @@ int main()
     inserareLaInceput(&head, a3);
     inserareLaInceput(&head, a4);
     inserareLaSfarsit(&head, a5);
-    inserareLaMijloc(&head->next->next->next, a6);
+    inserareLaMijloc(head->next->next->next, a6);
     printLista(head);
     stergeNode(&head, 1111);
     printf("\nLista dupa stergere id: 1111: \n");
