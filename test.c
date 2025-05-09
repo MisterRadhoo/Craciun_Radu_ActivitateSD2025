@@ -265,6 +265,20 @@ void inserareNodHT(HT ht, S sticla)
         }
     }
 }
+
+void stergereNodHT(HT ht, S sticla)
+{
+    int index = hashTwoHT(sticla.nume, sticla.id, ht.dimensiune);
+    if (index <= 0 || index > ht.dimensiune)
+    {
+        printf("\n Nod nu exista. \n");
+    }
+    else
+    {
+        stergereNod(&(ht.vector[index]), sticla.id);
+    }
+}
+
 S getNumeSticla(Node *cap, const char *numeCautat)
 {
     Node *p = cap;
@@ -410,10 +424,11 @@ int main()
     inserareNodHT(ht, s4);
     inserareNodHT(ht, s5);
     inserareNodHT(ht, s6);
+    stergereNodHT(ht, s4);
     printHT(ht);
 
     // dezalocareHT(&ht);
-
+    printf("\n--------------------------------------------------------------------------------\n");
     Node *head = NULL;
 
     inserareLaInceput(&head, s);
