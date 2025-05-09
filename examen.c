@@ -25,212 +25,178 @@ A initializare(int id, const char *brand, float masura, float pret)
 
 void printAdidas(A adidas)
 {
-    printf("id:-->> { %d }; \nBrand: -->> { %s }; \nMasura: -->> { %.1f }; \nPret unitar:-->> { %.2f } lei.\n", adidas.id, adidas.brand, adidas.masura, adidas.pretUnitar);
+    printf("id:-->> { %d }; \nBrand: -->> { %s }; \nMasura: -->> { %.1f }; \nPret unitar:-->> { %.2f } lei.\n", adidas.id, (adidas.brand ? adidas.brand : NULL), adidas.masura, adidas.pretUnitar);
 }
 
-void freeAdidas(A *a)
+void dezalocareAdidas(A *adidas)
 {
-    if (a->brand != NULL)
+    if (adidas->brand != NULL)
     {
-        free(a->brand);
-        printf("\nEliberare memorie struct Adidas: \n");
-        a->brand = NULL;
-    }
-}
-void afisareVector(A *vectorAdidas, int dimensiune)
-{
-    for (int i = 0; i < dimensiune; i++)
-    {
-        printAdidas(vectorAdidas[i]);
-        printf("\n");
-    }
-}
-void dezalocareVector(A **a, int *nrElemente)
-{
-    for (int i = 0; i < *nrElemente; i++)
-    {
-        free((*a)[i].brand);
-        printf("\nFree vector memory.... \n");
-    }
-
-    free((*a));
-    (*nrElemente) = 0;
-    (*a) = NULL;
-}
-
-// calculare pret mediul al produselor;
-float calculeazaPretMediu(A *adidas, int nrElemente)
-{
-    float suma = 0;
-    for (int i = 0; i < nrElemente; i++)
-    {
-        suma += adidas[i].pretUnitar;
-    }
-    return suma / nrElemente;
-}
-// get adidas dupa brand;
-A getAdidasBrand(A *adidas, int nrElemente, const char *brandCautat)
-{
-    A a;
-    for (int i = 0; i < nrElemente; i++)
-    {
-        if (strcmp(adidas[i].brand, brandCautat) == 0)
-        {
-            a = adidas[i];
-            a.brand = (char *)malloc((strlen(adidas[i].brand) + 1) * sizeof(char));
-            strcpy(a.brand, adidas[i].brand);
-            return a;
-        }
+        free(adidas->brand);
+        adidas->brand = NULL;
+        printf("\nDezalocare memorie adidas struct..... \n");
     }
 }
 
-// stocare intr-un vector, produsele cu pret = 799.99;
-A *copiazaAdidasPretMare(A *adidasVector, int nrElemente, float pret, int *dimensiune)
-{
-    // Initializare vector bazata pe o conditie;
-    (*dimensiune) = 0;
-    for (int i = 0; i < nrElemente; i++)
-    {
-        if (adidasVector[i].pretUnitar == pret)
-        {
-            (*dimensiune)++;
-        }
-    }
+// Implementare Lista simpla inlantuita;
 
-    A *vectorNou = (A *)malloc(sizeof(A) * (*dimensiune));
-    int index = 0;
-    for (int i = 0; i < nrElemente; i++)
-    {
-        if (adidasVector[i].pretUnitar == pret)
-        {
-            vectorNou[index] = adidasVector[i];
-            vectorNou[index].brand = (char *)malloc((strlen(adidasVector[i].brand) + 1) * sizeof(char));
-            strcpy(vectorNou[index].brand, adidasVector[i].brand);
-            index++;
-        }
-    }
-    return vectorNou;
-}
-
-// Liste simpla inlantuita;
-
-// Implemetare Structura Lista;
-typedef struct Node
+typedef struct Nod
 {
     A data;
-    struct Node *next; // self-referencial with a same data-type;
+    struct Nod *next;
 
-} Node; // alias;
+} Nod;
 
-void inserareLaInceput(Node **cap, A adidas)
+// implementare strutura Hash Table;
+typedef struct HashTable
 {
-    Node *nou = (Node *)malloc(sizeof(Node));
-    nou->data = adidas; // shallow copy;
-    nou->data.brand = (char *)malloc((strlen(adidas.brand) + 1) * sizeof(char));
-    strcpy(nou->data.brand, adidas.brand);
-    nou->next = (*cap);
-    (*cap) = nou;
+    int dimensiune;
+    Nod **vector;
+
+} HT;
+
+void inserareLaInceput(Nod **cap, A adidas)
+{
+    Nod *nouNod = (Nod *)malloc(sizeof(Nod));
+    nouNod->data = adidas; // shallow copy;
+    nouNod->data.brand = (char *)malloc((strlen(adidas.brand) + 1) * sizeof(char));
+    strcpy(nouNod->data.brand, adidas.brand);
+    nouNod->next = (*cap);
+    (*cap) = nouNod;
 }
 
-void inserareLaSfarsit(Node **cap, A adidas)
+void inserareLaSfarsit(Nod **cap, A adidas)
 {
-    Node *nouNode = (Node *)malloc(sizeof(Node));
-    nouNode->data = adidas;
-    nouNode->data.brand = (char *)malloc((strlen(adidas.brand) + 1) * sizeof(char));
-    strcpy(nouNode->data.brand, adidas.brand);
-    nouNode->next = NULL;
+    Nod *nou = (Nod *)malloc(sizeof(Nod));
+    nou->data = adidas;
+    nou->data.brand = (char *)malloc((strlen(adidas.brand) + 1) * sizeof(char));
+    strcpy(nou->data.brand, adidas.brand);
+    nou->next = NULL;
     if ((*cap) != NULL)
     {
-        Node *aux = (*cap);
-        while (aux->next)
+
+        Nod *p = (*cap);
+        while (p->next != NULL)
         {
-            aux = aux->next;
+            p = p->next;
         }
-        aux->next = nouNode;
+        p->next = nou;
     }
     else
     {
-        (*cap) = nouNode;
+        (*cap) = nou;
     }
 }
 
-void inserareLaMijloc(Node *nodAnterior, A adidas)
+void inseraLaMijloc(Nod *nodAnterior, A adidas)
 {
     if (nodAnterior == NULL)
     {
-        printf("Nodul anterior nu poate fi NULL. ");
+        printf("\nNodul anterior nu poate fi NULL. \n");
         return;
     }
-    Node *nouNode = (Node *)malloc(sizeof(Node));
-    nouNode->data = adidas;
-    nouNode->data.brand = (char *)malloc((strlen(adidas.brand) + 1) * sizeof(char));
-    strcpy(nouNode->data.brand, adidas.brand);
-    nouNode->next = nodAnterior->next;
-    nodAnterior->next = nouNode;
+    Nod *nouNod = (Nod *)malloc(sizeof(Nod));
+    nouNod->data = adidas;
+    nouNod->data.brand = (char *)malloc((strlen(adidas.brand) + 1) * sizeof(char));
+    strcpy(nouNod->data.brand, adidas.brand);
+    nouNod->next = nodAnterior->next;
+    nodAnterior->next = nouNod;
 }
 
-void stergeNode(Node **cap, int id)
+void stergeNodLista(Nod **cap, int id)
 {
     if ((*cap) != NULL)
     {
+
         if ((*cap)->data.id == id)
         {
-            Node *aux = (*cap);
-            (*cap) = (*cap)->next;
-            free(aux->data.brand);
-            free(aux);
+            Nod *p = (*cap);
+            (*cap) = (*cap)->next; // sterge nod;
+            free(p->data.brand);
+            free(p);
         }
         else
         {
-            Node *p = (*cap);
+            Nod *p = (*cap);
             while (p->next != NULL && p->next->data.id != id)
             {
-
                 p = p->next;
             }
             if (p->next == NULL)
             {
-                printf("id-ul: -->> [%d] nu exista. \n ", id);
+                printf("\nid nu exista: [ %d ], \n", id);
                 return;
             }
-
-            Node *aux = p->next;
-            p->next = p->next->next; // stergere Node;
+            Nod *aux = p->next;
+            p->next = p->next->next; // sterge nod;
             free(aux->data.brand);
             free(aux);
         }
     }
 }
 
-void printLista(Node *cap)
+// afisare lista;
+void printLista(Nod *cap)
 {
-    printf("\nLista are urmatoarele elemente: \n");
-    Node *p = cap;
+    printf("\nLista simpla inlantuita are nodurile: \n");
+    Nod *p = cap;
     while (p != NULL)
     {
         printAdidas(p->data);
-        p = p->next;
         printf("\n");
+        p = p->next;
     }
 }
 
-void stergereLista(Node **cap)
+// dezalocare spatiu de memorie pentru lista;
+void stergeLista(Nod **cap)
 {
     while ((*cap) != NULL)
     {
-        Node *p = (*cap);
+        Nod *p = (*cap);
         (*cap) = (*cap)->next;
         if (p->data.brand != NULL)
         {
             free(p->data.brand);
             p->data.brand = NULL;
-            printf("\nfree....\n");
+            printf("\nDezalocare memorie lista.....\n");
         }
         free(p);
     }
     (*cap) = NULL;
 }
-float calcPretMediu(Node *cap)
+// get adidas by id;
+A getAdidasId(Nod *cap, int id)
+{
+    Nod *temp = cap;
+    while (temp != NULL)
+    {
+        if (temp->data.id == id)
+        {
+            return temp->data;
+        }
+        temp = temp->next;
+    }
+    A empty = {-1, NULL, 0.00, 0};
+    printAdidas(empty);
+    return empty;
+}
+// modificare pret articol dupa id;
+void modificarePret(Nod *cap, int id, float pretNou)
+{
+    Nod *aux = cap;
+    while (aux != NULL)
+    {
+        if (aux->data.id == id)
+        {
+            aux->data.pretUnitar = pretNou;
+            printf("\nPretul articolului cu id: [ %d ], a fost modificat, are un pret nou de [ %.2f ] lei. \n", id, pretNou);
+        }
+        aux = aux->next;
+    }
+}
+
+float sumaMediePret(Nod *cap)
 {
     float suma = 0;
     int contor = 0;
@@ -246,91 +212,206 @@ float calcPretMediu(Node *cap)
     }
     return 0;
 }
-void modificarePret(Node *cap, int id, float pretNou)
+
+// initializare HT;
+HT initHT(int dimensiune)
 {
-    Node *temp = cap;
-    while (temp != NULL)
+    HT ht;
+    ht.dimensiune = dimensiune;
+    ht.vector = (Nod **)malloc(sizeof(Nod *) * dimensiune);
+    for (int i = 0; i < ht.dimensiune; i++)
     {
-        if (temp->data.id == id)
-        {
-            temp->data.pretUnitar = pretNou;
-            printf("Produsul cu id: [%d], a fost modificat, \nNoul Pret este de: [%.2f] lei. \n", id, pretNou);
-        }
-        temp = temp->next;
+        ht.vector[i] = NULL;
+    }
+    return ht;
+}
+// functia Hash Id+char*brand;
+int hash(const char *brand, int id, int dimensiune)
+{
+    int suma = 0;
+    for (int i = 0; i < strlen(brand); i++)
+    {
+        suma += brand[i];
+    }
+    suma += id;
+    return (dimensiune > 0 ? (suma % dimensiune) : -1);
+}
+
+void printHT(HT ht)
+{
+    for (int i = 0; i < ht.dimensiune; i++)
+    {
+        printf("\nHashTable Cluster [ %d ]: --->> \n", i);
+        printLista(ht.vector[i]);
     }
 }
 
-// get product by id;
-A getAdidasById(Node *cap, int id)
+void dezalocareHT(HT *ht)
 {
-    while (cap != NULL)
+    for (int i = 0; i < ht->dimensiune; i++)
     {
-        if (cap->data.id == id)
+        stergeLista(&(ht->vector)[i]);
+        printf("\nHT memory free....\n");
+    }
+    free(ht->vector);
+    ht->vector = NULL;
+    ht->dimensiune = 0;
+}
+
+void inserareNodHT(HT ht, A adidas)
+{
+    int index = hash(adidas.brand, adidas.id, ht.dimensiune);
+    if (index >= 0 && index < ht.dimensiune)
+    {
+        if (ht.vector[index] == NULL)
         {
-            return cap->data;
+            ht.vector[index] = (Nod *)malloc(sizeof(Nod));
+            ht.vector[index]->data = adidas; // shallow copy;
+            ht.vector[index]->data.brand = (char *)malloc((strlen(adidas.brand) + 1) * sizeof(char));
+            strcpy(ht.vector[index]->data.brand, adidas.brand);
+            ht.vector[index]->next = NULL;
         }
         else
-        {
-            cap = cap->next;
+        { // avem coliziuni;
+            inserareLaSfarsit(&(ht.vector[index]), adidas);
         }
     }
+}
+
+void stergeNodHT(HT ht, A adidas)
+{
+    int index = hash(adidas.brand, adidas.id, ht.dimensiune);
+    if (index <= 0 || index > ht.dimensiune)
+    {
+        printf("\nNod nu exista. \n");
+    }
+    else
+    {
+        stergeNodLista(&(ht.vector[index]), adidas.id);
+    }
+}
+
+float **mediaPretPeCluster(HT ht, int *nrClustere)
+{
+    (*nrClustere) = 0;
+    for (int i = 0; i < ht.dimensiune; i++)
+    {
+        if (ht.vector[i] != NULL)
+        {
+            (*nrClustere)++;
+        }
+    }
+
+    float **medii = (float **)malloc(sizeof(float *) * 2);
+    medii[0] = (float *)malloc(sizeof(float) * (*nrClustere));
+    medii[1] = (float *)malloc(sizeof(float) * (*nrClustere));
+    int index = 0;
+    for (int i = 0; i < ht.dimensiune; i++)
+    {
+        if (ht.vector[i] != NULL)
+        {
+            medii[0][index] = i;
+            medii[1][index] = sumaMediePret(ht.vector[i]);
+            index++;
+        }
+    }
+    return medii;
+}
+
+void afisareMatrice(float **matrice, int nrCol, int nrLinii)
+{
+    for (int i = 0; i < nrLinii; i++)
+    {
+        for (int j = 0; j < nrCol; j++)
+        {
+            printf(" [ %.2f ] ", matrice[i][j]);
+        }
+        printf("\n");
+    }
+}
+
+void dezalocareMatrice(float ***matrice, int *nrCol, int *nrLinii)
+{
+    for (int i = 0; i < *nrLinii; i++)
+    {
+        free((*matrice)[i]);
+        printf("\nMatrice free.....\n");
+    }
+    free((*matrice));
+    (*matrice) = NULL;
+    *nrCol = 0;
+    *nrLinii = 0;
+}
+
+A getIdAdidas(HT ht, int id)
+{
     A adidas;
-    adidas.id = -1;
-    return adidas;
+    for (int i = 0; i < ht.dimensiune; i++)
+    {
+        adidas = getAdidasId(ht.vector[i], id);
+        if (adidas.id == id)
+        {
+            return adidas;
+        }
+    }
+    A empty = {-1, NULL, 0.00, 0};
+    printAdidas(empty);
+    return empty;
 }
 
 int main()
 {
     A a = initializare(1111, "Nike Sb", 42.5, 799.99);
-    printAdidas(a);
     A a2 = initializare(2222, "Nike Sb x Riot", 45.5, 649.00);
     A a3 = initializare(3333, "Nike Sb x Futura", 42.5, 1899.99);
     A a4 = initializare(4444, "Nike Sb Asparagus", 42.5, 799.99);
     A a5 = initializare(8888, "Nike Sb x Parra", 42.5, 2000.15);
     A a6 = initializare(9999, "Air Jordan Low OG", 43.0, 899.00);
-    // sa se initialize un vector alocat dinamic.
-    int nrAdidasi = 4;
-    A *adidasi;
-    adidasi = (A *)malloc(sizeof(A) * nrAdidasi);
-    adidasi[0] = initializare(1, "Nike Sb Rodeo", 43.5, 699.99);
-    adidasi[1] = initializare(2, "Air jordan low OG", 42.5, 799.99);
-    adidasi[2] = initializare(3, "Nike Air force 1", 44.5, 649.99);
-    adidasi[3] = initializare(4, "Nike Sb Orange Lobster", 42.5, 799.99);
-    printf("\nAfisare vector\n");
-    afisareVector(adidasi, nrAdidasi);
-    float pretMediu = calculeazaPretMediu(adidasi, nrAdidasi);
-    printf("\nPretul Mediu al adidasilor este: [ %.2f ] lei \n", pretMediu);
+    A a7 = initializare(7777, "Nike Sb Chicago", 42.5, 1099.99);
+    A a8 = initializare(5555, "Nike Sb x Carhartt", 41.5, 1399.99);
+    A a9 = initializare(11111, "Nike Sb Purple Lobster", 42.5, 3399.99);
+    // printAdidas(a2);
 
-    A brand = getAdidasBrand(adidasi, nrAdidasi, "Nike Sb Rodeo");
-    printAdidas(brand);
-    freeAdidas(&brand);
-
-    int dimensiune = 0;
-    A *a1 = copiazaAdidasPretMare(adidasi, nrAdidasi, 799.99, &dimensiune);
-    printf("\nAdidasi cu pret de: 799.99 lei. \n");
-    afisareVector(a1, dimensiune);
-    dezalocareVector(&adidasi, &nrAdidasi);
-    dezalocareVector(&a1, &dimensiune);
-
-    Node *head = NULL;
-
+    Nod *head = NULL;
     inserareLaInceput(&head, a);
     inserareLaInceput(&head, a2);
-    inserareLaInceput(&head, a3);
-    inserareLaInceput(&head, a4);
-    inserareLaSfarsit(&head, a5);
-    inserareLaMijloc(head->next->next->next, a6);
-    printLista(head);
-    stergeNode(&head, 1111);
-    printf("\nLista dupa stergere id: 1111: \n");
+    inserareLaSfarsit(&head, a3);
+    inserareLaSfarsit(&head, a4);
+    inseraLaMijloc(head->next, a5);
+    inseraLaMijloc(head->next->next, a6);
+    stergeNodLista(&head, 9999);
     printLista(head);
 
-    float pretM = calcPretMediu(head);
-    printf("\nPret Mediu: -->> [ %.2f] lei \n", pretM);
-    modificarePret(head, 3333, 1499.99);
+    A idAdidas = getAdidasId(head, 9999);
+    modificarePret(head, 4444, 1499.99);
+    printLista(head);
 
-    A adidasId = getAdidasById(head, 3333);
-    printAdidas(adidasId);
+    float pretMediu = sumaMediePret(head);
+    printf("\nPret mediu: -->> [ %.2f ] lei.\n", pretMediu);
+
+    printf("\n-------------------Hash table data structure.-------------------------- \n");
+
+    HT ht = initHT(9);
+    inserareNodHT(ht, a);
+    inserareNodHT(ht, a2);
+    inserareNodHT(ht, a3);
+    inserareNodHT(ht, a4);
+    inserareNodHT(ht, a5);
+    inserareNodHT(ht, a6);
+    inserareNodHT(ht, a7);
+    inserareNodHT(ht, a8);
+    inserareNodHT(ht, a9);
+    stergeNodHT(ht, a);
+    printHT(ht);
+
+    A id = getIdAdidas(ht, 11111);
+    printAdidas(id);
+    printf("\n");
+    int nrClustere = 2;
+    int nrLinii = 2;
+    float **pretMediuMatrice = mediaPretPeCluster(ht, &nrClustere);
+    afisareMatrice(pretMediuMatrice, nrClustere, nrLinii);
+    dezalocareMatrice(&pretMediuMatrice, &nrClustere, &nrLinii);
 
     return 0;
 }
