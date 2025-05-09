@@ -296,6 +296,98 @@ S getNumeSticlaHT(HT ht, const char *numeCautat)
     return sticla;
 }
 
+S *getSticleCuCapMica(Node *cap, int *dimensiune, float capacitate)
+{
+
+    // initializare;
+    (*dimensiune) = 0;
+    Node *p = cap;
+    while (p != NULL)
+    {
+        if (p->data.capacitate < capacitate)
+        {
+            (*dimensiune)++;
+        }
+        p = p->next;
+    }
+    S *rezultateVector = (S *)malloc((*dimensiune) * sizeof(S));
+    int index = 0;
+    p = cap;
+    while (p != NULL)
+    {
+        if (p->data.capacitate < capacitate)
+        {
+            rezultateVector[index] = p->data;
+            rezultateVector[index].nume = (char *)malloc((strlen(p->data.nume) + 1) * sizeof(char));
+            strcpy(rezultateVector[index].nume, p->data.nume);
+            index++;
+        }
+        p = p->next;
+    }
+
+    return rezultateVector;
+}
+
+void afisareVector(S *vectorSticle, int dimensiune)
+{
+    for (int i = 0; i < dimensiune; i++)
+    {
+        printSticla(vectorSticle[i]);
+        printf("\n");
+    }
+}
+
+float **mediaCapPeClustere(HT ht, int *nrClustere)
+{
+    (*nrClustere) = 0;
+    for (int i = 0; i < ht.dimensiune; i++)
+    {
+        if (ht.vector[i] != NULL)
+        {
+            (*nrClustere)++;
+        }
+    }
+    float **matrix = (float **)malloc(sizeof(float *) * 2);
+    matrix[0] = (float *)malloc(sizeof(float) * (*nrClustere));
+    matrix[1] = (float *)malloc(sizeof(float) * (*nrClustere));
+    int index = 0;
+    for (int i = 0; i < ht.dimensiune; i++)
+    {
+        if (ht.vector[i] != NULL)
+        {
+            matrix[0][index] = i;
+            matrix[1][index] = medieCap(ht.vector[i]);
+            index++;
+        }
+    }
+    return matrix;
+}
+
+void afisareMatrice(float **matrix, int nrCol, int nrLinii)
+{
+    for (int i = 0; i < nrLinii; i++)
+    {
+        for (int j = 0; j < nrCol; j++)
+        {
+            printf("  [ %.2f ]  ", matrix[i][j]);
+        }
+        printf("\n");
+    }
+}
+
+void dezalocareMatrice(float ***matrix, int *nrLinii, int *nrCol)
+{
+    for (int i = 0; i < *nrLinii; i++)
+    {
+        free((*matrix)[i]);
+        printf("\nMatrix free... \n");
+    }
+    free((*matrix));
+    *matrix = NULL;
+    *nrLinii = 0;
+    *nrCol = 0;
+}
+
 int main()
 {
     S s = initializare(1, "Greey Goose", "Vodka", 0.70);
@@ -340,6 +432,17 @@ int main()
 
     S getNumeHT = getNumeSticlaHT(ht, "Burn Sun");
     printSticla(getNumeHT);
+
+    printf("\nVector ce contine sticle cu cap. mica: \n");
+    int dimensiune = 0;
+    S *vectorCapMici = getSticleCuCapMica(head, &dimensiune, 0.85);
+    afisareVector(vectorCapMici, dimensiune);
+
+    int nrClustere = 2;
+    int nrLinii = 2;
+    float **matrice = mediaCapPeClustere(ht, &nrClustere);
+    afisareMatrice(matrice, nrClustere, nrLinii);
+    dezalocareMatrice(&matrice, &nrLinii, &nrClustere);
 
     stergereLista(&head);
     dezalocareSticla(&s);
