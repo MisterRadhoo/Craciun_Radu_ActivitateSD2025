@@ -1,4 +1,4 @@
-#define _CRT_NO_SECURE_WARNINGS
+#define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -47,6 +47,42 @@ typedef struct Node
 
 } Node;
 
+int inaltimeABC(Node *rad)
+{
+    if (rad != NULL)
+    {
+        int Hs = inaltimeABC(rad->st);
+        int Hd = inaltimeABC(rad->dr);
+        return 1 + (Hs > Hd ? Hs : Hd);
+    }
+    else
+    {
+        return 0;
+    }
+}
+
+// calculare grad de echilibru; (arbori de echilibrare AVL)
+int CGE(Node *rad)
+{
+    return inaltimeABC(rad->st) - inaltimeABC(rad->dr);
+}
+
+void rotireStanga(Node **rad)
+{
+    Node *aux = (*rad)->dr;
+    (*rad)->dr = aux->st;
+    aux->st = (*rad);
+    (*rad) = aux;
+}
+
+void rotireDreapta(Node **rad)
+{
+    Node *aux2 = (*rad)->st;
+    (*rad)->st = aux2->dr;
+    aux2->dr = (*rad);
+    (*rad) = aux2;
+}
+
 void inserareABC(Node **rad, L laptop)
 {
     if ((*rad) != NULL)
@@ -58,6 +94,27 @@ void inserareABC(Node **rad, L laptop)
         else
         {
             inserareABC(&(*rad)->dr, laptop);
+        }
+        // verificare grad de echilibru;
+        int gradEchilibru = CGE(*rad);
+        if (gradEchilibru == -2)
+        {
+            // dezechilibru in partea dreapta;
+            if (CGE((*rad)->dr) == 1)
+            {
+                // dubla rotire;
+                rotireDreapta(&(*rad)->dr);
+            }
+            rotireStanga(rad);
+        }
+        if (gradEchilibru == 2)
+        {
+            // dezechilibru in partea stanga;
+            if (CGE((*rad)->st) == -1)
+            { // dublu rotire;
+                rotireStanga(&(*rad)->st);
+            }
+            rotireDreapta(rad);
         }
     }
     else
@@ -148,20 +205,6 @@ float pretTotal(Node *rad)
     else
     {
         return (rad->infoUtil.pret + pretTotal(rad->st) + pretTotal(rad->dr));
-    }
-}
-
-int inaltimeABC(Node *rad)
-{
-    if (rad != NULL)
-    {
-        int Hs = inaltimeABC(rad->st);
-        int Hd = inaltimeABC(rad->dr);
-        return 1 + (Hs > Hd ? Hs : Hd);
-    }
-    else
-    {
-        return 0;
     }
 }
 
