@@ -52,6 +52,13 @@ Heap initializareHeap(int dimensiune)
 {
     Heap heap;
     heap.vector = (H *)malloc(sizeof(H) * dimensiune);
+    for (int i = 0; i < dimensiune; i++)
+    {
+        heap.vector[i].id = 0;
+        heap.vector[i].nume = NULL;
+        heap.vector[i].masura = 0;
+        heap.vector[i].pret = 0.00;
+    }
     heap.nrElemente = 0;
     heap.dimensiune = dimensiune;
     return heap;
