@@ -264,7 +264,7 @@ int main()
     // preOrdine(root);
 
     int h = hBST(root);
-    printf("\nInnaltime ABC: [ %d ], \n", h);
+    printf("\nInaltime ABC: [ %d ], \n", h);
 
     float total = pretTotal(root);
     printf("\nPret total: [ %.2f ] lei.\n", total);
