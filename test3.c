@@ -3,22 +3,43 @@
 #include <stdlib.h>
 #include <string.h>
 
-// implementare Node pentru arbore binar cautare ABC;
+typedef struct Ceas
+{
+    int id;
+    char *brand;
+    float pret;
+
+} C;
+
+C initializare(int id, const char *brand, float pret)
+{
+    C ceas;
+    ceas.id = id;
+    ceas.brand = (char *)malloc(sizeof(char) * (strlen(brand) + 1));
+    strcpy(ceas.brand, brand);
+    ceas.pret = pret;
+    return ceas;
+}
+
+void afisareCeas(C ceas)
+{
+    printf("\nid: [ %d ], \nBrand: [ %s ], \nPret: [ %.2f ] $.\n", ceas.id, ceas.brand, ceas.pret);
+}
+
 typedef struct AVL
 {
-    int data;
-    struct AVL *st;
-    struct AVL *dr;
+    C info;
+    struct AVL *st; // subarborele stang AVL;
+    struct AVL *dr; // subarborele drept AVL;
 
 } AVL;
 
-// calculare h-inaltine AVL tree;
-int hAVL(AVL *root)
+int inaltimeAVL(AVL *root)
 {
     if (root != NULL)
     {
-        int Hs = hAVL(root->st);
-        int Hd = hAVL(root->dr);
+        int Hs = inaltimeAVL(root->st);
+        int Hd = inaltimeAVL(root->dr);
         return 1 + (Hs > Hd ? Hs : Hd);
     }
     else
@@ -27,9 +48,9 @@ int hAVL(AVL *root)
     }
 }
 
-int factorBalans(AVL *root)
+int factorDeBalans(AVL *root)
 {
-    return hAVL(root->st) - hAVL(root->dr);
+    return inaltimeAVL(root->st) - inaltimeAVL(root->dr);
 }
 
 void rotireStanga(AVL **root)
@@ -48,35 +69,36 @@ void rotireDreapta(AVL **root)
     (*root) = aux2;
 }
 
-void inserareAVL(AVL **root, int value)
+void inserareAVL(AVL **root, C ceasNou)
 {
     if ((*root) != NULL)
     {
-        if (value < (*root)->data)
+        if (ceasNou.id < (*root)->info.id)
         {
-            inserareAVL(&(*root)->st, value);
+            inserareAVL(&(*root)->st, ceasNou);
         }
         else
         {
-            inserareAVL(&(*root)->dr, value);
+            inserareAVL(&(*root)->dr, ceasNou);
         }
-        // verificare factor de balans;
-        int FB = factorBalans(*root);
+        int FB = factorDeBalans(*root);
         if (FB == -2)
         {
             // dezechilibru in partea dreapta;
-            if (factorBalans((*root)->dr) == 1)
-            { // rotire dreapta;
+            if (factorDeBalans((*root)->dr) == 1)
+            {
+
+                // rotire dreata;
                 rotireDreapta(&(*root)->dr);
             }
             rotireStanga(root);
         }
         if (FB == 2)
         {
-
             // dezechilibru in partea stanga;
-            if (factorBalans((*root)->st) == -1)
+            if (factorDeBalans((*root)->st) == -1)
             {
+                // rotire stanga;
                 rotireStanga(&(*root)->st);
             }
             rotireDreapta(root);
@@ -87,52 +109,10 @@ void inserareAVL(AVL **root, int value)
         AVL *nouNode = (AVL *)malloc(sizeof(AVL));
         nouNode->st = NULL;
         nouNode->dr = NULL;
-        nouNode->data = value;
+        nouNode->info = ceasNou;
+        nouNode->info.brand = (char *)malloc((strlen(ceasNou.brand) + 1) * sizeof(char));
+        strcpy(nouNode->info.brand, ceasNou.brand);
         (*root) = nouNode;
-    }
-}
-
-// traversare postOrdine -> SDR;
-void postOrdine(AVL *root)
-{
-    if (root != NULL)
-    {
-        postOrdine(root->st);
-        postOrdine(root->dr);
-        printf("\nPostOrdine AVL tree: [ %d ] \n", root->data);
-    }
-}
-
-// SRD;
-void inOrdine(AVL *root)
-{
-    if (root != NULL)
-    {
-        inOrdine(root->st);
-        printf("\nInOrdine AVL tree: [ %d ] --> \n", root->data);
-        inOrdine(root->dr);
-    }
-}
-
-// RSD;
-void preOrdine(AVL *root)
-{
-    if (root != NULL)
-    {
-        printf("\nPreOrdine AVL tree: [ %d ] --> \n", root->data);
-        preOrdine(root->st);
-        preOrdine(root->dr);
-    }
-}
-
-void dezalocareAVL(AVL **root)
-{
-    if ((*root) != NULL)
-    {
-        dezalocareAVL(&(*root)->st);
-        dezalocareAVL(&(*root)->dr);
-        free((*root));
-        (*root) = NULL;
     }
 }
 
@@ -148,7 +128,78 @@ int nrNoduri(AVL *root)
     }
 }
 
-int sum(AVL *root)
+// traversare postOrder AVL tree -> SDR;
+void postOrder(AVL *root)
+{
+    if (root != NULL)
+    {
+
+        postOrder(root->st);
+        postOrder(root->dr);
+        afisareCeas(root->info);
+    }
+}
+
+// traversare inOrder AVL tree-> SRD;
+void inOrder(AVL *root)
+{
+    if (root != NULL)
+    {
+
+        inOrder(root->st);
+        afisareCeas(root->info);
+        inOrder(root->dr);
+    }
+}
+
+void preOrder(AVL *root)
+{
+    if (root != NULL)
+    {
+
+        afisareCeas(root->info);
+        preOrder(root->st);
+        preOrder(root->dr);
+    }
+}
+
+void dezalocareAVL(AVL **root)
+{
+    if ((*root) != NULL)
+    {
+        dezalocareAVL(&(*root)->st);
+        dezalocareAVL(&(*root)->dr);
+        free((*root)->info.brand);
+        free((*root));
+        (*root) = NULL;
+    }
+}
+
+C getId(AVL *root, int id)
+{
+    C ceas;
+    ceas.id = -1;
+    ceas.brand = NULL;
+    ceas.pret = 0.00f;
+    if (root != NULL)
+    {
+        if (id < root->info.id)
+        {
+            return getId(root->st, id);
+        }
+        else if (id > root->info.id)
+        {
+            return getId(root->dr, id);
+        }
+        else
+        {
+            return root->info;
+        }
+    }
+    return ceas;
+}
+
+float sum(AVL *root)
 {
     if (root == NULL)
     {
@@ -156,49 +207,59 @@ int sum(AVL *root)
     }
     else
     {
-        return (root->data + sum(root->st) + sum(root->dr));
+        return (root->info.pret + sum(root->st) + sum(root->dr));
     }
-}
-int search(AVL *root, int value)
-{
-    if (root != NULL)
-    {
-        if (value < root->data)
-        {
-            return search(root->st, value);
-        }
-        else if (value > root->data)
-        {
-            return search(root->dr, value);
-        }
-        else
-        {
-            return root->data;
-        }
-    }
-    return -1;
 }
 
 int main()
 {
+    C c = initializare(89, "Omega SpeedMaster", 2400.55);
+    C c1 = initializare(109, "Rolex Rust", 3400.00);
+    C c2 = initializare(99, "Tudor Pelagos", 5699.89);
+    C c3 = initializare(26, "Casio G-shock", 124.55);
+    C c4 = initializare(19, "Seiko Diver", 220.55);
+    C c5 = initializare(54, "Skeletor CHinatown", 24.55);
+    C c6 = initializare(88, "Rolex Daytona", 8999.99);
+    C c7 = initializare(189, "AP", 20000.00);
+    // afisareCeas(c);
+
     AVL *root = NULL;
-    inserareAVL(&root, 24);
-    inserareAVL(&root, 13);
-    inserareAVL(&root, 3);
-    inserareAVL(&root, 65);
-    inserareAVL(&root, 176);
-    inserareAVL(&root, 15);
-    inserareAVL(&root, 32);
-    inserareAVL(&root, 9);
-    inserareAVL(&root, 44);
 
-    postOrdine(root);
-    preOrdine(root);
-    inOrdine(root);
+    inserareAVL(&root, c);
+    inserareAVL(&root, c1);
+    inserareAVL(&root, c2);
+    inserareAVL(&root, c3);
+    inserareAVL(&root, c4);
+    inserareAVL(&root, c5);
+    inserareAVL(&root, c6);
+    inserareAVL(&root, c7);
 
-    printf("\nSuma tuturor valorilor din AVL: -->> [ %d ]\n", sum(root));
-    printf("\nInaltime AVL: -->> [ %d ], \n", hAVL(root));
-    printf("\nFactorul de balans: [ %d ], \n", factorBalans(root));
-    int key = search(root, 24);
-    printf("\n[%d],", key);
+    printf("\nAfisare AVL postOrdine.......\n");
+    postOrder(root);
+    printf("\nAfisare AVL inOrdine.......\n");
+    inOrder(root);
+    printf("\nAfisare AVL preOrdine.......\n");
+    preOrder(root);
+
+    int h = inaltimeAVL(root);
+    printf("\nInaltime AVL: [ %d ], ", h);
+    int factor = factorDeBalans(root);
+    printf("\nFactor de balans AVL: [ %d ], \n", factor);
+    C idCeas = getId(root, 189);
+
+    if (idCeas.id != -1)
+    {
+        afisareCeas(idCeas);
+    }
+    else
+    {
+        printf("\nId ceas nu a fost gasit!\n");
+    }
+
+    float total = sum(root);
+    printf("\nSuma totala: [%.2f] $ \n", total);
+
+    dezalocareAVL(&root);
+
+    return 0;
 }
