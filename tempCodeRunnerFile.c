@@ -1,1 +1,2 @@
- Pacient p5 = initializare("Gheorghe Cristian", 72, "Dureri torace", 3);
+
+{

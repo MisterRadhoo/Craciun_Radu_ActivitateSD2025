@@ -127,7 +127,7 @@ void insertAfter(struct Node *prev_node, int newData)
     // initializare noul node;
     newNode->data = newData;         // stocam valoarea in noul node,accesand membru de data al struct;
     newNode->next = prev_node->next; // stocam noul node la restul listei, pastrand referinta catre urmatorul node;
-    prev_node->next = newNode;       // ponter-ul next al struct Node* next, arata catre adresa de memorie a noului Node;
+    prev_node->next = newNode;       // pointer-ul next al struct Node* next, arata catre adresa de memorie a noului Node;
 }
 
 // insert at end, new node;
