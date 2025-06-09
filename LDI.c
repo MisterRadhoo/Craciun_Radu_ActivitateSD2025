@@ -26,6 +26,16 @@ void afisarePC(PC pc)
     printf("\nId: [ %d ]; Brand PC: [ %s ]; Pret: -->> [ %.2f ] lei. \n", pc.id, pc.brand, pc.pret);
 }
 
+void dezalocare(PC *pc)
+{
+    if (pc->brand != NULL)
+    {
+        free(pc->brand);
+        pc->brand = NULL;
+        printf("\nfree....PC...\n");
+    }
+}
+
 // implementare Liste dubla inlantuita;
 typedef struct Nod Nod;
 typedef struct LDI LDI;
@@ -43,16 +53,6 @@ struct LDI
     Nod *ultim;
     int nrNoduri;
 };
-
-void dezalocare(PC *pc)
-{
-    if (pc->brand != NULL)
-    {
-        free(pc->brand);
-        pc->brand = NULL;
-        printf("\nfree....PC...\n");
-    }
-}
 
 void parcurgereLista(LDI *lista)
 {
