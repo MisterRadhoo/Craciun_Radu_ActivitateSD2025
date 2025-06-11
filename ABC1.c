@@ -140,7 +140,7 @@ void afisareInOrdineABC(Node *rad)
         afisareInOrdineABC(rad->dr);
     }
 }
-// RSD  // afiseaza valori in ordine crescatoare;
+// RSD;
 void afisarePreOrdineABC(Node *rad)
 {
     if (rad != NULL)
@@ -229,10 +229,10 @@ int main()
     inserareABC(&root, l7);
 
     printf("\nParcurgere ABC InOrdine.....\n");
-    afisareInOrdineABC(root);
+    // afisareInOrdineABC(root);
 
     printf("\nParcurgere ABC PreOrdine.....\n");
-    // afisarePreOrdineABC(root);
+    afisarePreOrdineABC(root);
 
     printf("\nParcurgere ABC PostOrdine.........\n");
     afisarePostOrdineABC(root);
